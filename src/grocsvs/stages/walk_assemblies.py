@@ -29,28 +29,21 @@ class WalkAssembliesStep(step.StepChunk):
     @staticmethod
     def get_steps(options):
         yield WalkAssembliesStep(options)
-        # for sample_name, sample in options.samples.items():
-            # yield WalkAssembliesStep(options, sample)
 
 
-    def __init__(self, options):#, sample):
+    def __init__(self, options):
         self.options = options
-        # self.sample = sample
-        # self.dataset = self.sample.get_10x_dataset()
 
     def __str__(self):
-        return ".".join([self.__class__.__name__])#,
-                         # self.sample.name])
+        return ".".join([self.__class__.__name__])
 
     def outpaths(self, final):
         directory = self.results_dir if final \
                     else self.working_dir
 
-        walk_assemblies = "walk_assemblies.tsv"#.{}".format(
-            # self.sample.name)
+        walk_assemblies = "walk_assemblies.tsv"
 
-        graphs = "walk_assemblies.graphs"#.{}".format(
-            # self.sample.name)
+        graphs = "walk_assemblies.graphs"
 
         paths = {
             "walk_assemblies": os.path.join(directory, walk_assemblies),
@@ -271,28 +264,6 @@ class WalkAssembliesStep(step.StepChunk):
     #     r["dev.off"]()
 
 
-# def quantify_breakpoint(chromx, x, chromy, y, orientation, 
-#                         options, sample, dataset, 
-#                         good_bc_count, dist1, dist2):
-
-#     fragsx, fragsy, merged = structuralvariants.get_supporting_fragments_new(
-#         options, sample, dataset, chromx, x, chromy, y, orientation, 
-#         dist1, dist2, min_reads_per_frag=0)
-
-#     bcx = set(fragsx["bc"])
-#     bcy = set(fragsy["bc"])
-
-#     common_barcodes = bcx.intersection(bcy)
-#     if len(common_barcodes) < 1:
-#         return None
-
-#     total_barcodes = bcx.union(bcy)
-
-#     contingency_table = numpy.array([[len(common_barcodes), len(bcx-bcy)],
-#                                      [len(bcy-bcx), good_bc_count-len(total_barcodes)]])
-#     p = scipy.stats.fisher_exact(contingency_table, alternative="greater")[1]
-
-#     return len(common_barcodes), len(total_barcodes), p
 
 def sort_by_ref_pos(q1, r1, q2, r2, l=None):
     if r1 < r2:
@@ -413,30 +384,12 @@ def walk_local(bam, chrom, pos, direction, offset=4000, window_size=10000):
 
     filtered_reads = [read for read in reads if (read.reference_end>=positions[0] and
                                                  read.reference_start<=positions[-1])]
-    # filtered_reads = set([reads[start_index]])
-    # for i in range(start_index, end_index, increment):
-    #     read1 = reads[i]
-    #     read2 = reads[i+increment]
-    #     # print i, read1.pos, read2.pos
-    #     filtered_reads.add(read1)
-        
-    #     if read2.reference_end < read1.reference_start:
-    #         if (read1.reference_start - read2.reference_end) > abs(offset):
-    #             print "??a"
-    #             break
-    #     elif read1.reference_end < read2.reference_start:
-    #         if (read2.reference_start - read1.reference_end) > abs(offset):
-    #             print "??b", read1.reference_start, read1.reference_end, read2.reference_start, read2.reference_end
-    #             break
-    #     filtered_reads.add(read2)
 
     if direction == "-":
         filtered_reads = sorted(filtered_reads, key=lambda x: x.reference_start)
     elif direction == "+":
         filtered_reads = sorted(filtered_reads, key=lambda x: x.reference_end)
 
-    # print "$$$$", [r.pos for r in reads]
-    # print [r.pos for r in filtered_reads]
     return filtered_reads
 
 

@@ -9,7 +9,6 @@ import subprocess
 from grocsvs import step
 from grocsvs import utilities
 
-#from grocsvs.stages import collect_reads_for_barcodes as crfb
 from grocsvs.stages import collect_reads_for_barcodes
 from grocsvs.stages import cluster_svs
 
@@ -143,7 +142,6 @@ class AssemblyStep(step.StepChunk):
         self.logger.log("Running assembly command: '{}'".format(command))
         cmd = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
         retcode = cmd.wait()
-        print "::::", retcode
         
         if not os.path.exists(contigs_path):
             if retcode != 0 and  "invalid insert distance" in cmd.stderr.read():
