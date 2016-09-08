@@ -65,7 +65,7 @@ The configuration file is in the `JSON <http://www.json.org>`_ format, and conta
 
 **Reference genome** The following paths must be defined:
 
-* ``ref_fasta``: path to the reference genome FASTA file (hg19.fa, GRCh39.fa, etc)
+* ``ref_fasta``: path to the reference genome FASTA file (hg19.fa, GRCh38.fa, etc)
 * ``bwa_index``: path to the genome index used by bwa-mem
 
 In addition, the following optional paths may be specified:
@@ -96,6 +96,8 @@ Each dataset is defined as a hash. 10x datasets must define the following items:
     }
 
 Where ``processes`` specifies the maximum number of separate jobs (1 processor per job) to allow. ``scheduler`` may be any of the clusters supported by `ipython-cluster-helper <https://github.com/roryk/ipython-cluster-helper>`_. Currently, these are Platform LSF ("lsf"), Sun Grid Engine ("sge"), Torque ("torque"), and SLURM ("slurm").
+
+Note that for SLURM clusters, the preferred batch submission method is using ``admiral``, which is installed by default with grocsvs. See the tumor-normal configuration in the examples directory.
 
 
 3. Run GROC-SVs
@@ -130,5 +132,5 @@ The ``grocsvs /path/to/experiment/configuration.json`` command may be run multip
 
 If an error arises, the output from ``grocsvs`` or the log files may be informative.
 
-Please submit issues on the `github page for grocsvs <https://github.com/grocsvs/grocsvs>`_.
+Please submit issues on the `github page for grocsvs <https://github.com/grocsvs/grocsvs/issues>`_.
 
