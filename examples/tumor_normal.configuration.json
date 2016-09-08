@@ -1,0 +1,35 @@
+{  
+    "ref_fasta":"/mnt/data/genomics/hg19.fasta",
+    "bwa_index":"/mnt/data/genomics/refdata-hg19-1.1.0/fasta/genome.fa",
+    "blacklists":[  
+        "/mnt/data/genomics/blacklist.bed",
+        "/mnt/data/genomics/blacklist.bedpe"
+    ],
+    "binaries": {
+        "bwa": "/software/bin/bwa"
+    },
+    "samples":{  
+        "Tumor":[  
+            {  
+                "type":"TenXDataset",
+                "bam":"/mnt/data/genomics/tumor_normal/outs/phased_possorted_bam.bam",
+                "id":"Tumor"
+            }
+        ],
+        "Normal":[  
+            {  
+                "type":"TenXDataset",
+                "bam":"/mnt/data/genomics/tumor_normal/outs/phased_possorted_bam.bam",
+                "id":"Normal"
+            }
+        ]
+    },
+    "cluster_settings": {
+        "cluster_type": "admiral",
+        "cluster_options": {
+            "scheduler": "slurm",
+            "queue": "owners",
+            "mem": "16g"
+        }
+    }
+}
