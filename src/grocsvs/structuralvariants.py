@@ -3,7 +3,7 @@ import numpy
 import pandas
 from scipy import stats
 
-from grocsvs.stages import filter_fragments
+from grocsvs.stages import call_readclouds
 
 
 class StructuralVariant(object):
@@ -201,11 +201,11 @@ def get_fragments_one_side(options, sample, dataset, chrom, position,
     start = max(0, start)
     
     if with_phasing:
-        frags = filter_fragments.get_frags_with_phasing(
+        frags = call_readclouds.get_frags_with_phasing(
             options, sample, dataset, chrom, start, end,
             min_reads_per_frag=min_reads_per_frag)
     else:
-        frags = filter_fragments.load_fragments(
+        frags = call_readclouds.load_fragments(
             options, sample, dataset, chrom, start, end,
             min_reads_per_frag=min_reads_per_frag)
 

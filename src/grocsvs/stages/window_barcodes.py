@@ -4,7 +4,6 @@ import os
 from grocsvs import datasets as svdatasets
 from grocsvs import step
 from grocsvs import utilities
-from grocsvs.stages import filter_fragments
 from grocsvs.stages import call_readclouds
 
 CHUNKSIZE = 5e7
@@ -77,7 +76,7 @@ class WindowBarcodesStep(step.StepChunk):
 
 
         self.logger.log("Loading barcode map...")
-        # filter_fragments_step = filter_fragments.FilterFragmentsStep(
+        # call_readclouds_step = call_readclouds.FilterFragmentsStep(
         input_step = call_readclouds.CombineReadcloudsStep(
             self.options, self.sample, self.dataset)
         barcode_map = utilities.pickle.load(
@@ -90,7 +89,7 @@ class WindowBarcodesStep(step.StepChunk):
 
         self.logger.log("Running chunk: {}:{:,}-{:,}".format(self.chrom, start, end))
 
-        fragments = filter_fragments.load_fragments(
+        fragments = call_readclouds.load_fragments(
             self.options, self.sample, self.dataset,
             self.chrom, start, end, min_reads_per_frag=0)
 

@@ -8,7 +8,7 @@ from grocsvs import step
 from grocsvs import structuralvariants
 from grocsvs import utilities
 
-from grocsvs.stages import filter_fragments
+from grocsvs.stages import call_readclouds
 from grocsvs.stages import sv_candidate_regions
 
 
@@ -226,11 +226,11 @@ class SVCandidatesStep(step.StepChunk):
 
 
     def get_sv_data(self, sv_region):
-        fragsx = filter_fragments.load_fragments(
+        fragsx = call_readclouds.load_fragments(
             self.options, self.sample, self.dataset, 
             sv_region["chromx"], sv_region["startx"], sv_region["endx"],
             min_reads_per_frag=0)
-        fragsy = filter_fragments.load_fragments(
+        fragsy = call_readclouds.load_fragments(
             self.options, self.sample, self.dataset, 
             sv_region["chromy"], sv_region["starty"], sv_region["endy"],
             min_reads_per_frag=0)
