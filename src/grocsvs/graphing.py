@@ -9,7 +9,7 @@ import scipy.stats
 from grocsvs import structuralvariants
 from grocsvs import datasets as svdatasets
 from grocsvs import utilities
-from grocsvs.stages import filter_fragments
+from grocsvs.stages import call_readclouds
  
 Node = collections.namedtuple("Node", "chrom position orientation")
 
@@ -417,7 +417,8 @@ def get_frags_for_breakends(breakends, islast, options, sample, dataset):
     window_start = max(1, start - extend)
     window_end = end + extend
     
-    cur_frags = filter_fragments.get_frags_with_phasing(
+    #cur_frags = filter_fragments.get_frags_with_phasing(
+    cur_frags = call_readclouds.load_fragments(
                     options, sample, dataset, 
                     chrom, window_start, window_end,
                     min_reads_per_frag=0)

@@ -13,7 +13,7 @@ from grocsvs import utilities
 
 from grocsvs.stages import assembly
 from grocsvs.stages import cluster_svs
-from grocsvs.stages import filter_fragments
+from grocsvs.stages import call_readclouds
 
 BAM_CMATCH     = 0
 BAM_CINS       = 1

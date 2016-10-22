@@ -51,9 +51,10 @@ def log_command(options, argv):
 
     try:
         with utilities.cd(main_dir):
-            git_hash = subprocess.check_output("git rev-parse HEAD", shell=True).strip()
-            if subprocess.check_output("git diff", shell=True):
-                git_hash += "+"
+            with open(os.devnull, "w") as devnull:
+                git_hash = subprocess.check_output("git rev-parse HEAD", shell=True, stderr=devnull).strip()
+                if subprocess.check_output("git diff", shell=True, stderr=devnull):
+                    git_hash += "+"
     except subprocess.CalledProcessError:
         git_hash = ""
 

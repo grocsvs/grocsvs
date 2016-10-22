@@ -14,8 +14,8 @@ class LocalCluster(Cluster):
 
 
 class IPCluster(Cluster):
-    def __init__(self, processes, cluster_settings):
-        super(IPCluster, self).__init__(processes, cluster_settings)
+    # def __init__(self, processes, cluster_settings, batch_dir):
+    #     super(IPCluster, self).__init__(processes, cluster_settings)
 
     def map(self, fn, args):
         from cluster_helper.cluster import cluster_view

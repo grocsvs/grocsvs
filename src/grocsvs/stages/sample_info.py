@@ -6,7 +6,7 @@ import pysam
 from grocsvs import datasets as svdatasets
 from grocsvs import step
 from grocsvs import utilities
-from grocsvs.stages import filter_fragments
+from grocsvs.stages import call_readclouds
 
 # def get_sample_info_steps(options):
 #     steps = []
@@ -80,7 +80,7 @@ class SampleInfoStep(step.StepChunk):
 
     def get_10xdataset_info(self, dataset):
         self.logger.log(" loading fragments...")
-        fragments = filter_fragments.load_fragments(
+        fragments = call_readclouds.load_fragments(
             self.options, self.sample, dataset)
 
         info = {
