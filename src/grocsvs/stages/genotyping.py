@@ -290,6 +290,8 @@ def count_ref_reads(bampath, reference, chrom, start, end):
     bam = pysam.AlignmentFile(bampath)
 
     # stepper = "all" skips dupe, unmapped, secondary, and qcfail reads
+    start = max(0, start)
+    
     for col in bam.pileup(chrom, start, end, truncate=True, stepper="all"):
         refnuc = reference.fasta[chrom][col.reference_pos].upper()
         nuc_counts = collections.Counter()
@@ -314,6 +316,9 @@ def count_nearby_Ns(options, genotypes):
         chromx, startx, endx = event["chromx"], event["x"]-5000, event["x"]+5000
         chromy, starty, endy = event["chromy"], event["y"]-5000, event["y"]+5000
 
+        startx = max(0, startx)
+        starty = max(0, starty)
+        
         seqx = options.reference.fasta[chromx][startx:endx].upper()
         seqy = options.reference.fasta[chromy][starty:endy].upper()
 

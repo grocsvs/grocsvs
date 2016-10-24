@@ -200,12 +200,12 @@ def get_fragments_one_side(options, sample, dataset, chrom, position,
 
     start = max(0, start)
     
-    if with_phasing:
-        frags = call_readclouds.get_frags_with_phasing(
-            options, sample, dataset, chrom, start, end,
-            min_reads_per_frag=min_reads_per_frag)
-    else:
-        frags = call_readclouds.load_fragments(
+    # if with_phasing:
+    #     frags = call_readclouds.get_frags(
+    #         options, sample, dataset, chrom, start, end,
+    #         min_reads_per_frag=min_reads_per_frag)
+    # else:
+    frags = call_readclouds.load_fragments(
             options, sample, dataset, chrom, start, end,
             min_reads_per_frag=min_reads_per_frag)
 

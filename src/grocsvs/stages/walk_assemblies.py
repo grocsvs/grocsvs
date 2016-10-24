@@ -74,6 +74,10 @@ class WalkAssembliesStep(step.StepChunk):
         assembled["x"] = assembled["x"].astype(int)
         assembled["y"] = assembled["y"].astype(int)
 
+        print self.options.reference.chroms
+        print assembled["chromx"].unique()
+        print assembled["chromy"].unique()
+        
         outpath = self.outpaths(final=False)["walk_assemblies"]
         assembled.to_csv(outpath, sep="\t", index=False)
 
@@ -107,12 +111,11 @@ class WalkAssembliesStep(step.StepChunk):
 
         # self.analyze_chains(chains, event_name)
 
-        # print "*"*1000
-        # print chains
         cur_edges = pandas.DataFrame(
             list(chains), columns=["chromx", "x", "orientationx", "chromy", "y", "orientationy", "contig"])
 
-        # print cur_edges
+        cur_edges = cur_edges.loc[(cur_edges["chromx"].isin(self.options.reference.chroms)) & 
+                                  (cur_edges["chromy"].isin(self.options.reference.chroms))]
         
         return cur_edges
 

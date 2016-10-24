@@ -131,7 +131,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
             fetch = bam.fetch(self.chrom, self.start, self.end)
 
         for read in fetch:
-            if read.pos < self.start:
+            if read.pos < self.start and not read.pos < 0:
                 continue
             if read.pos >= self.end and not self.past_end:
                 return
