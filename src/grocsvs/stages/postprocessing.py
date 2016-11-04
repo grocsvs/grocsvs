@@ -247,6 +247,10 @@ class PostprocessingStep(step.StepChunk):
             validated_assembled_or_blacklist = (to_validate_assembled_or_blacklist[validation_columns]>=10).any(axis=1)
             summary[" - assembled|pass blacklist"] = cwp(validated_assembled_or_blacklist.sum(), len(validated_assembled_or_blacklist))
 
+            to_validate_assembled_and_simple = to_validate.loc[to_validate["assembled"] & (to_validate["frag_length_passes"])]
+            validated_assembled_and_simple = (to_validate_assembled_and_simple[validation_columns]>=10).any(axis=1)
+            summary[" - assembled&simple"] = cwp(validated_assembled_and_simple.sum(), len(validated_assembled_and_simple))
+
             to_validate_assembled_or_nsegdups = to_validate.loc[to_validate["assembled"] | (to_validate["nearby_snvs"]<10)]
             to_validate_assembled_or_nsegdups = to_validate_assembled_or_nsegdups.loc[~to_validate_assembled_or_nsegdups["blacklist"].str.contains("N=").astype(bool)]
             validated_assembled_or_nsegdups = (to_validate_assembled_or_nsegdups[validation_columns]>=10).any(axis=1)
