@@ -59,7 +59,10 @@ class CombineReadcloudsStep(step.StepChunk):
 
         readclouds = []
         for i, inpath in enumerate(self.get_input_paths()):
-            readclouds.append(pandas.read_table(inpath, compression="gzip"))
+            try:
+                readclouds.append(pandas.read_table(inpath, compression="gzip"))
+            except pandas.io.common.EmptyDataError:
+                self.logger.log("No read clouds found in {}; skipping".format(inpath))
         readclouds = pandas.concat(readclouds)
         goodbcs = get_good_barcodes(readclouds)
         readclouds = readclouds.loc[readclouds["bc"].isin(goodbcs)]
@@ -152,6 +155,9 @@ def sample_inter_read_distances(bam_path, window_size=0.5e6, skip_size=5e7):
 
     window_size = int(window_size)
     skip_size = int(skip_size)
+    if skip_size < window_size:
+        skip_size = window_size
+        
     distances = []
     
     for chrom, length in zip(bam.references, bam.lengths):
@@ -174,7 +180,11 @@ def sample_inter_read_distances(bam_path, window_size=0.5e6, skip_size=5e7):
                         if len(distances) > 10e6: # that's a plenty big sample!
                             return distances
                 bc_last_pos[bc] = read.pos
-                
+
+    if len(distances) < 25 and skip_size > window_size:
+        new_skip_size = skip_size / 100
+        return sample_inter_read_distances(bam_path, window_size, new_skip_size)
+    
     return distances
 
 
@@ -245,7 +255,8 @@ def call_readclouds(bam_path, chrom, max_dist):
     readcloud_iter = detector.get_read_clouds(chrom)
     dataframe = pandas.DataFrame(readcloud_iter)
 
-    dataframe = dataframe.sort_values(["start_pos", "end_pos"])
+    if len(dataframe) > 1:
+        dataframe = dataframe.sort_values(["start_pos", "end_pos"])
 
     return dataframe
 
@@ -418,6 +429,10 @@ def load_fragments(options, sample, dataset, chrom=None, start=None, end=None, u
 
     tabix = pysam.TabixFile(readclouds_path)
 
+    if chrom is not None and chrom not in tabix.contigs:
+        print("MISSING:", chrom)
+        return pandas.DataFrame(columns="chrom start_pos end_pos bc num_reads obs_len hap".split())
+    
     if usecols is not None and "num_reads" not in usecols:
         usecols.append("num_reads")
         
