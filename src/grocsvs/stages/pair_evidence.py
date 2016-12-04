@@ -39,6 +39,8 @@ class PairEvidenceStep(step.StepChunk):
         events = get_events(options, sample, dataset)
 
         nchunks = min(100, len(events)/5)
+        nchunks = max(1, nchunks)
+
         #nchunks = 1
         for i in range(nchunks):
             step = PairEvidenceStep(options, sample, dataset, i, nchunks)

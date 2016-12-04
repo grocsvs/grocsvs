@@ -190,7 +190,12 @@ class Options(object):
         otherwise just return the name of the binary to try running it
         if it's in $PATH
         """
-        return self.binaries.get(name, name)
+        
+        bin_path = self.binaries.get(name, name)
+        if utilities.which(bin_path) is None:
+            raise Exception("Failed to locate binary '{}'; please make sure it is in ".format(name) + 
+                            "your $PATH or add it to the configuration.json file")
+        return bin_path
 
 
     @property

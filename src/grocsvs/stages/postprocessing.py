@@ -294,9 +294,12 @@ class PostprocessingStep(step.StepChunk):
                 pair = chrom_pairs.pop()
                 chrom_pair_counts["simple"]["{},{}".format(*pair)] += len(group)
             
-
         chrom_pair_counts = pandas.DataFrame(chrom_pair_counts)
         chrom_pair_counts.index = pandas.MultiIndex.from_tuples([k.split(",") for k in chrom_pair_counts.index])
+        
+        if not "complex" in chrom_pair_counts:
+            chrom_pair_counts["complex"] = 0
+
         chrom_pair_counts["complex_frac"] = chrom_pair_counts["complex"].astype(float)/(chrom_pair_counts["complex"]+chrom_pair_counts["simple"])
         print chrom_pair_counts.sort_index()
 

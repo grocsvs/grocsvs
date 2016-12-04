@@ -100,7 +100,11 @@ class GenotypingStep(step.StepChunk):
         genotypes = genotypes[columns]
 
         self.logger.log("Detecting segmental duplications...")
-        frag_length_filter(genotypes, self.options)
+        try:
+            frag_length_filter(genotypes, self.options)
+        except:
+            self.logger.log("warning: could not accurately apply fragment length filter;"
+                            " this can happen when there is not genome-wide data availabe")
 
         segdup_detector(genotypes, self.options)        
         compare_to_blacklist(genotypes, self.options)

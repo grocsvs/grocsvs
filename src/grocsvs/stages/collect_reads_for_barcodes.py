@@ -126,7 +126,6 @@ class CollectReadsForBarcodesStep(step.StepChunk):
             for i, read in enumerate(fetch):
                 if i % 100 == 0: print i
             fetch = bam.fetch(until_eof=True)
-
         else:
             fetch = bam.fetch(self.chrom, self.start, self.end)
 
@@ -137,14 +136,17 @@ class CollectReadsForBarcodesStep(step.StepChunk):
                 return
             if read.is_secondary or read.is_supplementary:
                 continue
+            if self.past_end and read.reference_id != -1:
+                continue
 
             if read.has_tag("BX"):
                 barcode = read.get_tag("BX")
             elif read.has_tag("RX"):
                 barcode = read.get_tag("RX")
             else:
-                self.logging.log("ERROR: read has no BX nor RX tags: {}".format(str(read)))
-                sys.exit(1)
+                continue
+                #self.logger.log("ERROR: read has no BX nor RX tags: {}".format(str(read)))
+                #sys.exit(1)
                 
             barcode = barcode.split(",")[0]#.split("-")[0]
 
