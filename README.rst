@@ -10,7 +10,7 @@ Installation
 Prerequisites: the following programs must be installed prior to running GROC-SVs:
 
 * `idba_ud <https://github.com/loneknightpy/idba>`_
-* `samtools <http://www.htslib.org/download/>`_
+* `samtools <http://www.htslib.org/download/>`_ version 1.0 or later
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
 
 We recommend setting up a `virtualenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ prior to installing GROC-SVs (or using `virtualenvwrapper <http://www.simononsoftware.com/virtualenv-tutorial-part-2/>`_):
