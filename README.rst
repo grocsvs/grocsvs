@@ -9,9 +9,10 @@ Installation
 
 Prerequisites: the following programs must be installed prior to running GROC-SVs:
 
-* `idba_ud <https://github.com/loneknightpy/idba>`_
+* `idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_ (please use this version, as the version distributed by the original author does not support paired reads longer than 128 bp)
 * `samtools <http://www.htslib.org/download/>`_ version 1.0 or later
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
+* `graphviz <http://www.graphviz.org/Download..php>`_ (optional)
 
 We recommend setting up a `virtualenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ prior to installing GROC-SVs (or using `virtualenvwrapper <http://www.simononsoftware.com/virtualenv-tutorial-part-2/>`_):
 
@@ -97,7 +98,7 @@ Each dataset is defined as a hash. 10x datasets must define the following items:
 
 Where ``processes`` specifies the maximum number of separate jobs (1 processor per job) to allow. ``scheduler`` may be any of the clusters supported by `ipython-cluster-helper <https://github.com/roryk/ipython-cluster-helper>`_. Currently, these are Platform LSF ("lsf"), Sun Grid Engine ("sge"), Torque ("torque"), and SLURM ("slurm").
 
-Note that for SLURM clusters, the preferred batch submission method is using ``admiral``, which is installed by default with grocsvs. See the tumor-normal configuration in the examples directory.
+To run in parallel on a single machine, use ``cluster_type":"multiprocessing"`` and specify the desired number of ``processes``.
 
 
 3. Run GROC-SVs
@@ -123,6 +124,22 @@ Final results of interest might be:
 * ``results/FinalClusterSVsStep/edges.tsv``: full information relating breakpoints in complex structural variants
 
 
+Docker (and example dataset)
+============================
+
+A docker image is available for grocsvs. If you wish to download and run grocsvs on an example dataset (~1.3GB required), you can run the following commands:
+
+.. code-block:: bash
+    
+    wget url/grocsvs_example.tar.gz # use 'curl -O' if you're on a mac without wget
+    tar -xf grocsvs_example.tar.gz
+
+Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, the following command can be used to analyze the example data from within docker (make sure you are in the same directory where you downloaded and extracted grocsvs_example.tar.gz):
+
+.. code-block:: bash
+
+    docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json
+
 
 
 Troubleshooting
@@ -130,7 +147,12 @@ Troubleshooting
 
 The ``grocsvs /path/to/experiment/configuration.json`` command may be run multiple times to resume the pipeline.
 
+If you are having trouble installing or running grocsvs, the docker file (see above) may help you diagnose the issue.
+
 If an error arises, the output from ``grocsvs`` or the log files may be informative.
+
+**ShortSequence: Sequence is too long.** If you get this error during assembly, please make sure you are using `the grocsvs fork of idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_.
+
 
 Please submit issues on the `github page for grocsvs <https://github.com/grocsvs/grocsvs/issues>`_.
 

@@ -306,45 +306,47 @@ def _barcodes_for_breakpoint(options, sample, dataset, nodex, nodey, dist1, dist
 
 
 def visualize_graphs(outdir, graphs, evidence, file_label=""):
-    utilities.ensure_dir(outdir)
+    try:
+        utilities.ensure_dir(outdir)
 
-    supported = 0
-    missing = 0
-    breakpoints = 0
+        supported = 0
+        missing = 0
+        breakpoints = 0
 
-    for i, graph in enumerate(graphs):
-        print i, graph
-        graph = graph.copy()
+        for i, graph in enumerate(graphs):
+            print i, graph
+            graph = graph.copy()
 
-        for n1,n2,data in graph.edges(data=True):
-            data["label"] = "{}/{}={:.2g};{:.2g}".format(
-                int(data["shared"]),
-                int(data["total"]),
-                data["shared"]/float(data["total"]),
-                data["p"])
-            if data["kind"]=="facing":
-                data["label"] = "[{}]".format(data["label"])
-                data["style"] = "dashed"
-            elif data["kind"] == "breakpoint":
-                breakpoints += 1
-            elif data["kind"] == "weak":
-                data["fontsize"] = 11
-                data["color"] = "gray"
+            for n1,n2,data in graph.edges(data=True):
+                data["label"] = "{}/{}={:.2g};{:.2g}".format(
+                    int(data["shared"]),
+                    int(data["total"]),
+                    data["shared"]/float(data["total"]),
+                    data["p"])
+                if data["kind"]=="facing":
+                    data["label"] = "[{}]".format(data["label"])
+                    data["style"] = "dashed"
+                elif data["kind"] == "breakpoint":
+                    breakpoints += 1
+                elif data["kind"] == "weak":
+                    data["fontsize"] = 11
+                    data["color"] = "gray"
 
-            if "assembled" in data:
-                data["color"] = "orange"
+                if "assembled" in data:
+                    data["color"] = "orange"
 
-        for node in graph.nodes():
-            graph.node[node]["label"] = get_node_label(node)
+            for node in graph.nodes():
+                graph.node[node]["label"] = get_node_label(node)
 
-        dot = networkx.nx_agraph.to_agraph(graph)
-        if len(dot.edges())> 1000:
-            print "  skipping"
-            continue
-        dot.draw("{}/temp{}{}.pdf".format(outdir, file_label, i), prog="dot")
+            dot = networkx.nx_agraph.to_agraph(graph)
+            if len(dot.edges())> 1000:
+                print("  skipping")
+                continue
+            dot.draw("{}/temp{}{}.pdf".format(outdir, file_label, i), prog="dot")
 
-    print "Supported:", supported, "Missing:", missing, "Total breakpoints:", breakpoints
-
+        print("Supported:", supported, "Missing:", missing, "Total breakpoints:", breakpoints)
+    except ValueError:
+        pass
 
 
 def breakend_from_label(node):

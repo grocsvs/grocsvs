@@ -276,7 +276,7 @@ def get_read_coverage_of_fragments(options, sample, dataset, fragments):
     coverages = []
     lengths = []
 
-    sampled_frags = fragments.sample(1000)
+    sampled_frags = fragments.sample(500)
 
     print "sampling long fragments, getting coverage by short reads..."
     for i, (_, frag) in enumerate(sampled_frags.iterrows()):
