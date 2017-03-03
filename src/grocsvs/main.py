@@ -149,10 +149,15 @@ def parse_arguments(args):
     parser = argparse.ArgumentParser(description="Genome-wide Reconstruction of Complex Structural Variants")
     parser.add_argument("config", help="Path to configuration.json file")
     parser.add_argument("--restart", metavar="FROM-STAGE", help="restart from this stage")
-    parser.add_argument("--local", action="store_true", help="run locally using multiprocessing")
+    parser.add_argument("--local", action="store_true", help="run locally in single processor mode")
+    parser.add_argument("--multiprocessing", action="store_true", help="run locally using multiprocessing")
     parser.add_argument("--debug", action="store_true", help="run in debug mode")
 
-    args = parser.parse_args()
+    if len(args) < 1:
+        parser.print_help()
+        sys.exit(1)
+
+    args = parser.parse_args(args)
     
     options = load_config(args.config)
     options.debug = args.debug
@@ -161,6 +166,9 @@ def parse_arguments(args):
 
     if args.local:
         options.cluster_settings = svoptions.ClusterSettings()
+    if args.multiprocessing:
+        options.cluster_settings = svoptions.ClusterSettings()
+        options.cluster_settings.cluster_type = "multiprocessing"
 
     if args.restart is not None:
         clean(options, args.restart)
@@ -171,7 +179,7 @@ def parse_arguments(args):
 
 
 def main():
-    options = parse_arguments(sys.argv)
+    options = parse_arguments(sys.argv[1:])
     run(options)
 
 

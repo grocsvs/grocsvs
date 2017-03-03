@@ -77,13 +77,12 @@ class CombineReadcloudsStep(step.StepChunk):
 
 
         self.logger.log("Writing readclouds to file...")
-        bgzip_cmd = "bgzip -c > {}".format(outpaths["readclouds"])
-        bgzip_proc = subprocess.Popen(
-            bgzip_cmd, stdin=subprocess.PIPE, shell=True)
 
-        readclouds.to_csv(bgzip_proc.stdin, sep="\t", index=False)
+        tmp_readclouds_path = outpaths["readclouds"][:-3]
+        readclouds.to_csv(tmp_readclouds_path, sep="\t", index=False)
 
-        bgzip_proc.stdin.close()
+        bgzip_cmd = "bgzip {}".format(tmp_readclouds_path)
+        bgzip_proc = subprocess.Popen(bgzip_cmd, shell=True)
         bgzip_proc.wait()
 
 
