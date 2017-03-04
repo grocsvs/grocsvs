@@ -10,7 +10,7 @@ Installation
 Prerequisites: the following programs must be installed prior to running GROC-SVs:
 
 * `idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_ (please use this version, as the version distributed by the original author does not support paired reads longer than 128 bp)
-* `samtools <http://www.htslib.org/download/>`_ version 1.0 or later
+* `samtools and htslib <http://www.htslib.org/download/>`_ version 1.0 or later (``samtools``, ``bgzip``, and ``tabix`` programs must all be in your ``$PATH``)
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
 * `graphviz <http://www.graphviz.org/Download..php>`_ (optional)
 
@@ -131,8 +131,8 @@ A docker image is available for grocsvs. If you wish to download and run grocsvs
 
 .. code-block:: bash
     
-    wget url/grocsvs_example.tar.gz # use 'curl -O' if you're on a mac without wget
-    tar -xf grocsvs_example.tar.gz
+    wget http://mendel.stanford.edu/public/noah/grocsvs_example.tar.gz # use 'curl -O' if you're on a mac without wget
+    tar -xzf grocsvs_example.tar.gz
 
 Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, the following command can be used to analyze the example data from within docker (make sure you are in the same directory where you downloaded and extracted grocsvs_example.tar.gz):
 
