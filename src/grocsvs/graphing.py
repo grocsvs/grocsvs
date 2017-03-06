@@ -345,7 +345,7 @@ def visualize_graphs(outdir, graphs, evidence, file_label=""):
             dot.draw("{}/temp{}{}.pdf".format(outdir, file_label, i), prog="dot")
 
         print("Supported:", supported, "Missing:", missing, "Total breakpoints:", breakpoints)
-    except ValueError:
+    except:
         pass
 
 

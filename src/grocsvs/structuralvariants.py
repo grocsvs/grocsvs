@@ -339,11 +339,11 @@ def overlap_matrix(merged, startx, endx, starty, endy, winsize=250):
     mat = numpy.zeros([leny, lenx])    
     
     for i, row in merged.iterrows():
-        xa = numpy.floor((max(startx, row["start_pos_x"]) - startx) / float(winsize))
-        xb = numpy.ceil((min(endx, row["end_pos_x"]) - startx) / float(winsize))
+        xa = int(numpy.floor((max(startx, row["start_pos_x"]) - startx) / float(winsize)))
+        xb = int(numpy.ceil((min(endx, row["end_pos_x"]) - startx) / float(winsize)))
 
-        ya = numpy.floor((max(starty, row["start_pos_y"]) - starty) / float(winsize))
-        yb = numpy.ceil((min(endy, row["end_pos_y"]) - starty) / float(winsize))
+        ya = int(numpy.floor((max(starty, row["start_pos_y"]) - starty) / float(winsize)))
+        yb = int(numpy.ceil((min(endy, row["end_pos_y"]) - starty) / float(winsize)))
         
         mat[ya:yb, xa:xb] += 1
     

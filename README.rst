@@ -100,6 +100,7 @@ Where ``processes`` specifies the maximum number of separate jobs (1 processor p
 
 To run in parallel on a single machine, use ``cluster_type":"multiprocessing"`` and specify the desired number of ``processes``.
 
+To override the cluster options in the configuration.json file, use ``--local`` to specify single-core mode or ``--multiprocessing`` to specify running in parallel using all cores on a single machine.
 
 3. Run GROC-SVs
 """""""""""""""
@@ -131,7 +132,8 @@ A docker image is available for grocsvs. If you wish to download and run grocsvs
 
 .. code-block:: bash
     
-    wget http://mendel.stanford.edu/public/noah/grocsvs_example.tar.gz # use 'curl -O' if you're on a mac without wget
+    # use 'curl -O' if you're on a mac without wget
+    wget http://mendel.stanford.edu/public/noah/grocsvs_example.tar.gz 
     tar -xzf grocsvs_example.tar.gz
 
 Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, the following command can be used to analyze the example data from within docker (make sure you are in the same directory where you downloaded and extracted grocsvs_example.tar.gz):
@@ -140,7 +142,7 @@ Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, 
 
     docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json
 
-
+This requires ~16GB of memory to run and will take ~1 hour to complete. The output can be found in ``grocsvs_example/results``.
 
 Troubleshooting
 ===============
