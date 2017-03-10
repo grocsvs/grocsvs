@@ -144,6 +144,18 @@ Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, 
 
 This requires ~16GB of memory to run and will take ~1 hour to complete. The output can be found in ``grocsvs_example/results``.
 
+Comparison to Long Ranger Pipeline
+==================================
+
+Briefly, GROC-SVs was designed to detect and characterize complex structural variants such as those frequently found in cancer or in orphan diseases. The Long Ranger software available from 10x Genomics can also perform SV detection using inferred long-fragment sequence information, but is more well-suited to analysis of individual germline genomes. Note that both GROC-SVs and Long Ranger are being actively developed, and so some features may migrate between packages.
+
+GROC-SVs:
+
+* performs sequence assembly of structural variants
+* reconstructs large-scale complex structural variants
+* is designed for multi-sample analyses (tumor/normal, or trios) - this is important when identifying somatic or de novo germline events, as analyzing multiple samples separately can result in false negative calls in the control or parent samples
+
+
 Troubleshooting
 ===============
 
