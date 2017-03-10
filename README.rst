@@ -9,8 +9,8 @@ Installation
 
 Prerequisites: the following programs must be installed prior to running GROC-SVs:
 
-* `idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_ (please use this version, as the version distributed by the original author does not support paired reads longer than 128 bp)
-* `samtools and htslib <http://www.htslib.org/download/>`_ version 1.0 or later of the ``samtools``, ``bgzip``, and ``tabix`` programs must all be in your ``$PATH``
+* `idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_ -- please use this version, as the version distributed by the original author does not support paired reads longer than 128 bp
+* `samtools and htslib <http://www.htslib.org/download/>`_ -- version 1.0 or later of the ``samtools``, ``bgzip``, and ``tabix`` programs must all be in your ``$PATH``
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
 * `graphviz <http://www.graphviz.org/Download..php>`_ (optional)
 
