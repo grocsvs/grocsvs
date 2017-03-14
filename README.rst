@@ -140,7 +140,7 @@ Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, 
 
 .. code-block:: bash
 
-    docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json
+    docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json --local
 
 This requires ~16GB of memory to run and will take ~1 hour to complete. The output can be found in ``grocsvs_example/results``.
 
