@@ -427,7 +427,7 @@ def load_fragments(options, sample, dataset, chrom=None, start=None, end=None, u
         "readclouds.{}.{}.tsv.gz".format(sample.name, dataset.id))
 
     tabix = pysam.TabixFile(readclouds_path)
-
+    
     if chrom is not None and chrom not in tabix.contigs:
         print("MISSING:", chrom)
         return pandas.DataFrame(columns="chrom start_pos end_pos bc num_reads obs_len hap".split())
@@ -437,7 +437,8 @@ def load_fragments(options, sample, dataset, chrom=None, start=None, end=None, u
         
     s = StringIO.StringIO("\n".join(tabix.fetch(chrom, start, end)))
     readclouds = pandas.read_table(s, header=None, names=Readcloud._fields, usecols=usecols)
-
+    readclouds["chrom"] = readclouds["chrom"].astype("string")
+    
     if min_reads_per_frag > 0:
         readclouds = readclouds.loc[readclouds["num_reads"]>min_reads_per_frag]
 

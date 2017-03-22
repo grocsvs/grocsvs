@@ -93,6 +93,10 @@ def load_evidence(options):
     path = refine_grid_search_breakpoints.CombineRefinedBreakpointsStep(options)\
                              .outpaths(final=True)["refined_pairs"]
     evidence = pandas.read_table(path)
+
+    evidence["chromx"] = evidence["chromx"].astype("string")
+    evidence["chromy"] = evidence["chromy"].astype("string")
+
     evidence["p"] = evidence["p_resampling"]
     
     return evidence, short_frag_support, mate_pair_support
@@ -131,7 +135,7 @@ def precluster(evidence, distance=3000):
     for chrom, p in positions.groupby("chrom"):
         p = p.copy()
         p["group"] = ((p["pos"]-p["pos"].shift()) > distance).cumsum()
-        p["clustered"] = p.groupby("group").transform(mean_)
+        p["clustered"] = p.groupby("group")["pos"].transform(mean_)
         transforms.append(p[["chrom","pos","clustered"]])
     transform = pandas.concat(transforms)
 

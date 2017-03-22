@@ -63,7 +63,9 @@ class MatePairEvidenceStep(step.StepChunk):
 
         path = self.evidence_step.outpaths(final=True)["evidence"]
         evidence = pandas.read_table(path)
-
+        evidence["chromx"] = evidence["chromx"].astype("string")
+        evidence["chromy"] = evidence["chromy"].astype("string")
+        
         sample_info = self.options.sample_info(self.sample.name)
         dataset_info = sample_info[self.dataset.id]
 

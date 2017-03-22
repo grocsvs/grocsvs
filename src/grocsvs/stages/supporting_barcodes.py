@@ -86,6 +86,7 @@ class SupportingBarcodesStep(step.StepChunk):
                                  .outpaths(final=True)["merged_candidates"]
 
         events = pandas.read_table(path)
+        events["chrom"] = events["chrom"].astype("string")
         return events
         
     def get_event_barcodes(self, event):

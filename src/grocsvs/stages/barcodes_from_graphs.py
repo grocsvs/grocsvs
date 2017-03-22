@@ -95,5 +95,7 @@ class BarcodesFromGraphsStep(step.StepChunk):
         edges_path = cluster_svs.ClusterSVsStep(self.options).outpaths(final=True)["edges"]
 
         graphs_table = pandas.read_table(edges_path)
+        graphs_table["chromx"] = graphs_table["chromx"].astype("string")
+        graphs_table["chromy"] = graphs_table["chromy"].astype("string")
 
         return graphs_table

@@ -106,7 +106,8 @@ def load_assembly_evidence(options):
     path = walk_assemblies.WalkAssembliesStep(options) \
                           .outpaths(final=True)["walk_assemblies"]
     evidence = pandas.read_table(path)
-
+    evidence["chromx"] = evidence["chromx"].astype("string")
+    evidence["chromy"] = evidence["chromy"].astype("string")
     return evidence
 
 

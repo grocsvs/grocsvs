@@ -49,6 +49,8 @@ class CombineRefinedBreakpointsStep(step.StepChunk):
                 inputs.append(pandas.read_table(inpath))
 
         combined = pandas.concat(inputs)
+        combined["chromx"] = combined["chromx"].astype("string")
+        combined["chromy"] = combined["chromy"].astype("string")
 
         combined.to_csv(self.outpaths(final=False)["refined_pairs"], sep="\t", index=False)
         
@@ -119,6 +121,8 @@ class RefineGridSearchBreakpointsStep(step.StepChunk):
         if len(cur_events) > 0:
             significant_events = combine_nearby_events(pandas.concat(cur_events))
             significant_events = significant_events[["chromx", "x", "chromy", "y", "orientation"]]
+            significant_events["chromx"] = significant_events["chromx"].astype("string")
+            significant_events["chromy"] = significant_events["chromy"].astype("string")
             return significant_events
         else:
             return []
@@ -176,6 +180,7 @@ def refine_events(events, options, logger):
     results = []
     count = 0
     for i, event in events.iterrows():
+        print ">>>", i, event.dtypes
         logger.log("{}:{}::{}:{}{}".format(event["chromx"], event["x"],
                                            event["chromy"], event["y"],
                                            event["orientation"]))
