@@ -125,6 +125,9 @@ class SVCandidatesStep(step.StepChunk):
             candidate_regions = pandas.DataFrame()
         else:
             candidate_regions = pandas.read_table(path)
+            
+            candidate_regions["chromx"] = candidate_regions["chromx"].astype("string")
+            candidate_regions["chromy"] = candidate_regions["chromy"].astype("string")
 
         if self.chromx == self.chromy:
             diagonal = []
@@ -142,8 +145,6 @@ class SVCandidatesStep(step.StepChunk):
 
             candidate_regions = pandas.concat([candidate_regions, diagonal])
 
-        candidate_regions["chromx"] = candidate_regions["chromx"].astype("string")
-        candidate_regions["chromy"] = candidate_regions["chromy"].astype("string")
         
         return candidate_regions
 
