@@ -138,8 +138,11 @@ class EstimateReadCloudParamsStep(step.StepChunk):
 
         inter_read_distances = sample_inter_read_distances(self.dataset.bam)
         result = {}
-        result["sampled_inter_read_distances"] = numpy.random.choice(
-            inter_read_distances, int(0.5e6), replace=False)
+        try:
+            result["sampled_inter_read_distances"] = numpy.random.choice(
+                inter_read_distances, int(0.5e6), replace=False)
+        except ValueError:
+            result["sampled_inter_read_distances"] = inter_read_distances
         result["read_cloud_clustering_distance"] = \
             max(10000, int(numpy.ceil(numpy.percentile(inter_read_distances, 99) / 5000)) * 5000)
 
