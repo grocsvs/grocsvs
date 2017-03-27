@@ -329,7 +329,7 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
         print mat.dtype
         print norm
         print norm.dtype
-        print "MAX": norm.max()
+        print "MAX:", norm.max()
         print "CALC", numpy.where(norm==norm.max())
         print "WHERE:", where
         
