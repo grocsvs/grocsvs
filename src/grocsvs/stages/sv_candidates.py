@@ -323,7 +323,7 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
         where = (where[0][0], where[1][0])
 
         # TODO: constants
-        is_good = (mat[int(where)] > 25 and norm[int(where)] > 0.05)
+        is_good = (mat[where] > 25 and norm[where] > 0.05)
         
         if is_good:
             breakpoint = (where[1]*window_size + sv_region["startx"],
