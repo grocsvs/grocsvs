@@ -323,6 +323,16 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
         where = (where[0][0], where[1][0])
 
         # TODO: constants
+        print "*"*100
+        print "DEBUG "*10
+        print mat
+        print mat.dtype
+        print norm
+        print norm.dtype
+        print "MAX": norm.max()
+        print "CALC", numpy.where(norm==norm.max())
+        print "WHERE:", where
+        
         is_good = (mat[where] > 25 and norm[where] > 0.05)
         
         if is_good:
