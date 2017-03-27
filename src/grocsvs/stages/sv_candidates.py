@@ -325,8 +325,10 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
         # TODO: constants
         print "*"*100
         print "DEBUG "*10
+        print "MAT"
         print mat
         print mat.dtype
+        print "NORM"
         print norm
         print norm.dtype
         print "MAX:", norm.max()
