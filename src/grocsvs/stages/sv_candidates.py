@@ -319,22 +319,8 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
     breakpoints = []
 
     while not norm.mask.all():
-        where = numpy.where(norm==norm.max())
+        where = numpy.ma.where(norm==norm.max())
         where = (where[0][0], where[1][0])
-
-        # TODO: constants
-        print "*"*100
-        print "DEBUG "*10
-        print numpy.__version__
-        print "MAT"
-        print mat
-        print mat.dtype
-        print "NORM"
-        print norm
-        print norm.dtype
-        print "MAX:", norm.max()
-        print "CALC", numpy.where(norm==norm.max())
-        print "WHERE:", where
         
         is_good = (mat[where] > 25 and norm[where] > 0.05)
         
