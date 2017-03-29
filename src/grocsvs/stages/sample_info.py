@@ -95,7 +95,7 @@ class SampleInfoStep(step.StepChunk):
                 fragments, self.options.reference, self.logger),
             "barcode_read_totals": get_barcode_read_totals(fragments)
         }
-
+        
         info["frag_length_info"] = get_frag_lengths(fragments)
         info["physical_depths"] = [len(d) for d in info["frag_length_distributions"]]
         info["coverage_of_fragments"] = get_read_coverage_of_fragments(
@@ -118,9 +118,9 @@ class SampleInfoStep(step.StepChunk):
         return info
 
     
-def get_bg_fragments_distributions(frags, reference, logger):
+def get_bg_fragments_distributions(frags, reference, logger, skip_length=1e6):
     distributions = []
-    skip_length = 1e6
+
     for chrom in reference.chroms:
         logger.log("BG Frag Length Distribution: {}".format(chrom))
         chrom_length = reference.chrom_lengths[chrom]
@@ -128,11 +128,14 @@ def get_bg_fragments_distributions(frags, reference, logger):
 
         if chrom_length < 2*skip_length: continue
         for pos in numpy.arange(skip_length, chrom_length - skip_length, skip_length):
-            e = utilities.frags_overlap_same_chrom(curfrags, pos, pos)
+            e = utilities.frags_overlap_same_chrom(curfrags, int(pos), int(pos))
             if e.shape[0] < 5:
                 continue
             distributions.append(e["obs_len"].values)
-
+    
+    if len(distributions) < 2 and skip_length > 1e5:
+        print("Trying again...")
+        return get_bg_fragments_distributions(frags, reference, logger, skip_length=5e4)
     return distributions
 
 def n50(values, fraction=0.5):
@@ -275,8 +278,11 @@ def get_read_coverage_of_fragments(options, sample, dataset, fragments):
 
     coverages = []
     lengths = []
-
+    
     sampled_frags = fragments.sample(500)
+    if len(fragments) < 5e4: # this can't be a real dataset so we'll do a short version
+        print("Running quickly")
+        sampled_frags = fragments.sample(50)
 
     print "sampling long fragments, getting coverage by short reads..."
     for i, (_, frag) in enumerate(sampled_frags.iterrows()):

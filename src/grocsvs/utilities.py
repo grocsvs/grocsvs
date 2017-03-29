@@ -211,3 +211,15 @@ def plot_matrix_as_image(mat, x1=None, y1=None, x2=None, y2=None, maxval=None, m
     r.rasterImage(r["as.raster"](mat, max=maxval), x1, y1, x2, y2)
 
 
+
+
+
+
+
+
+
+
+
+
+
+

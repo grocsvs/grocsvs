@@ -47,6 +47,8 @@ class CombineRefinedBreakpointsStep(step.StepChunk):
 
             if os.stat(inpath).st_size > 0:
                 inputs.append(pandas.read_table(inpath))
+        if len(inputs) == 0:
+            raise Exception("No candidate SVs discovered.")
 
         combined = pandas.concat(inputs)
         combined["chromx"] = combined["chromx"].astype("string")
