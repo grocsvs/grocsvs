@@ -11,7 +11,7 @@ Use the demux.py script to extract the inline droplet barcodes from the Chromium
 
 There are several required arguments:
 
-- the fastq1 and fastq2 files you've obtained from the sequencer/sequencing core
+- the ``fastq1`` and ``fastq2`` files you've obtained from the sequencer/sequencing core
 - the ``-s`` argument is used to specify which sample barcodes correspond to which biological samples; each Chromium barcode is actually made up of four different sequences, so just use the name of the barcode set you received from 10x, for example ``SI_GA_C1``; the list of possible options can be viewed in the accompanying ``_bcs.py`` file; you'll also specify the sample label for each sample here, for example ``SI_GA_C1=sample1``
 - the ``-b`` argument points to a file listing the valid Chromium droplet barcodes used (these are the "GEM" or gel emulsion droplet barcodes, which in Chromium are at the very beginning of the first read); you can just specify the accompanying ``4M-with-alts-february-2016.txt.xz`` file unless you have a newer set of barcodes
 

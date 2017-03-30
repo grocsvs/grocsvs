@@ -42,15 +42,19 @@ Running GROC-SVs
 
 Overview:
 
-1. run `longranger <http://support.10xgenomics.com/genome-exome/software>`_ on your 10x sequencing data
+1. extract barcodes and align your 10x sequencing data
 2. setup a ``configuration.json`` file describing your samples and your compute (eg cluster) setup
 3. run grocsvs
 
 
-1. Run longranger align
-"""""""""""""""""""""""
+1. Extract barcodes and align reads
+"""""""""""""""""""""""""""""""""""
 
-GROC-SVs uses the read alignments produced by the 10x software pipeline, so ``longranger align`` must be run prior to ``grocsvs``. Optionally, the full 10x longranger pipeline may be run, which adds phasing information that GROC-SVs can include in its analysis.
+There are two options to align 10x Genomics data to the reference genome for downstream use by GROC-SVs. The simplest option is to use the accompanying `simple_demux_map`_ script followed by read alignment using ``bwa mem``. Note that this will extract the 10x droplet barcodes for use by GROC-SVs (optionally demultiplexing pooled samples) but does not perform `barcode-aware read alignment <http://genome.cshlp.org/content/25/10/1570>`_.
+
+.. _simple_demux_map: simple_demux_map/README.rst
+
+The second option is to use the 10x Genomics `longranger align <http://support.10xgenomics.com/genome-exome/software>`_ pipeline, which can optionally perform the barcode-aware alignment. While not necessary, the full 10x longranger pipeline may be run, which adds phasing information that GROC-SVs can include in its analysis.
 
 
 2. Setup a configuration file
