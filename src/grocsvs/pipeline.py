@@ -69,8 +69,8 @@ def _run_chunk(chunk):
         raise
 
     
-    utilities.check_memory()
-        
+    utilities.check_memory(chunk.logger)
+
     try:
         chunk.run()
         chunk.finalize()
