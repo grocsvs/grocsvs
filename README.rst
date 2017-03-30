@@ -42,7 +42,7 @@ Running GROC-SVs
 
 Overview:
 
-1. extract barcodes and align your 10x sequencing data
+1. extract barcodes and align your 10x sequencing data to the reference genome
 2. setup a ``configuration.json`` file describing your samples and your compute (eg cluster) setup
 3. run grocsvs
 
@@ -54,7 +54,7 @@ There are two options to align 10x Genomics data to the reference genome for dow
 
 .. _simple_demux_map: simple_demux_map/README.rst
 
-The second option is to use the 10x Genomics `longranger align <http://support.10xgenomics.com/genome-exome/software>`_ pipeline, which can optionally perform the barcode-aware alignment. While not necessary, the full 10x longranger pipeline may be run, which adds phasing information that GROC-SVs can include in its analysis.
+The second option is to use the 10x Genomics `longranger align <http://support.10xgenomics.com/genome-exome/software>`_ pipeline, which can optionally perform barcode-aware alignment. While not necessary, the full 10x longranger pipeline may be run, which adds phasing information that GROC-SVs can include in its analysis.
 
 
 2. Setup a configuration file
@@ -111,7 +111,7 @@ To override the cluster options in the configuration.json file, use ``--local`` 
 
 To run GROC-SVs, use the ``grocsvs /path/to/experiment/configuration.json`` command. If you are using a virtualenv, remember to run ``source grocsvs_env/bin/activate`` to activate the virtualenv prior to running ``grocsvs``. 
 
-The output will be placed in the directory containing configuration (in this case, in ``/path/to/experiment/``), so make sure this filesystem has enough space for the analysis (~40GB per sample).
+The output will be placed in the directory containing configuration (in this case, in ``/path/to/experiment/``), so make sure this filesystem has enough space for the analysis (~40GB per sample). GROC-SVs typically requires about 12-16 GB of memory in order to run, though this depends on your samples. If you have less than 16 GB of memory available on your machine, a warning will be output but the pipeline will continue to run as best as it can.
 
 Note that the ``grocsvs`` command will continue running until all steps have completed. The ``grocsvs`` command itself is lightweight, and so can be run from a head node on your cluster.
 
@@ -146,7 +146,9 @@ Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, 
 
     docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json --local
 
-This requires ~16GB of memory to run and will take ~1 hour to complete. If you are running docker for Mac, please make sure that your virtual machine has access to at least 16GB of memory. The output can be found in ``grocsvs_example/results``.
+This requires ~16GB of memory to run and will take ~1 hour to complete. If you are running docker for Mac, please make sure that your virtual machine has access to at least 16GB of memory.
+
+The output can be found in ``grocsvs_example/results``.
 
 Comparison to Long Ranger Pipeline
 ==================================
