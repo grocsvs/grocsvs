@@ -142,7 +142,7 @@ Assuming `docker <https://docs.docker.com/engine/installation/>`_ is installed, 
 
     docker run -v `pwd`:/data -w /data/grocsvs_example/ grocsvs/grocsvs-docker grocsvs configuration.json --local
 
-This requires ~16GB of memory to run and will take ~1 hour to complete. The output can be found in ``grocsvs_example/results``.
+This requires ~16GB of memory to run and will take ~1 hour to complete. If you are running docker for Mac, please make sure that your virtual machine has access to at least 16GB of memory. The output can be found in ``grocsvs_example/results``.
 
 Comparison to Long Ranger Pipeline
 ==================================

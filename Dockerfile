@@ -2,6 +2,7 @@ FROM python:2
 
 RUN apt-get update && apt-get install -y graphviz
 
+
 RUN wget https://github.com/grocsvs/idba/archive/1.1.3g1.tar.gz \
      && tar -xf 1.1.3g1.tar.gz \
      && cd idba-1.1.3g1 \
@@ -26,9 +27,12 @@ RUN wget https://github.com/samtools/htslib/releases/download/1.3.2/htslib-1.3.2
      && cd htslib-1.3.2 \
      && make install
 
+RUN pip install -U pip
 
-RUN git clone https://github.com/grocsvs/grocsvs.git \
-     && cd grocsvs \
-     && pip install .
-    
+RUN mkdir grocsvs_src && cd grocsvs_src \
+     && wget https://github.com/grocsvs/grocsvs/archive/v0.2.3.tar.gz -O grocsvs.tar.gz \
+     && tar -xf grocsvs.tar.gz --strip-components 1 \
+     && pip install -r requirements.txt \
+     && pip install -vvv .
+
 CMD grocsvs
