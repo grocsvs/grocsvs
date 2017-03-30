@@ -52,7 +52,7 @@ Overview:
 
 There are two options to align 10x Genomics data to the reference genome for downstream use by GROC-SVs. The simplest option is to use the accompanying `simple_demux_map`_ script followed by read alignment using ``bwa mem``. Note that this will extract the 10x droplet barcodes for use by GROC-SVs (optionally demultiplexing pooled samples) but does not perform `barcode-aware read alignment <http://genome.cshlp.org/content/25/10/1570>`_.
 
-.. _simple_demux_map: simple_demux_map/README.rst
+.. _simple_demux_map: simple_demux_map/
 
 The second option is to use the 10x Genomics `longranger align <http://support.10xgenomics.com/genome-exome/software>`_ pipeline, which can optionally perform the barcode-aware alignment. While not necessary, the full 10x longranger pipeline may be run, which adds phasing information that GROC-SVs can include in its analysis.
 
