@@ -36,6 +36,18 @@ class cd:
   def __exit__(self, etype, value, traceback):
     os.chdir(self.savedPath)
     
+
+def check_memory(logger, min_memory=16):
+    try:
+        import psutil
+        physical_mem_gb = psutil.virtual_memory().total / (1000.**3)
+        if physical_mem_gb < min_memory:
+            logger.log("WARNING: GROC-SVs typically requires ~16 GB of memory to run; "
+                       "you appear to have only {:.1f}GB".format(physical_mem_gb))
+    except:
+        pass
+
+
 def which(program):
     import os
     def is_exe(fpath):

@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 from grocsvs import jobmanagers
 from grocsvs import utilities
 
@@ -67,6 +68,9 @@ def _run_chunk(chunk):
         print "== Error starting logging =="
         raise
 
+    
+    utilities.check_memory()
+        
     try:
         chunk.run()
         chunk.finalize()

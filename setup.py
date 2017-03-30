@@ -22,6 +22,6 @@ setup(
 
     install_requires = ["admiral", "h5py", "networkx", "pandas", "pybedtools", 
                         "pyfaidx", "pysam>=0.10.0", "scipy", "ipython-cluster-helper",
-                        "pygraphviz"],
+                        "pygraphviz", "psutil"],
 
 )
