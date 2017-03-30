@@ -91,9 +91,11 @@ def get_report(tenx_sample_info):
 
 def visualize_report(tenx_sample_infos, outpath):
     try:
-        from biorpy import r, plotting
-
-        r.pdf(outpath)
+        from rpy2 import robjects as ro
+        from grocsvs import plotting
+        
+        
+        ro.r.pdf(outpath)
 
         frag_lengths = [numpy.log10(sample_info["frag_length_info"]["sampled"]) for sample_info in tenx_sample_infos.values()]
         max_ = max(numpy.percentile(cur_frag_lengths, 99.5) for cur_frag_lengths in frag_lengths)
@@ -105,18 +107,20 @@ def visualize_report(tenx_sample_infos, outpath):
         plotting.barPlot(bc_counts, main="Number of high-quality barcodes", ylim=[0, 1.1*max(bc_counts.values())])
 
         # oldpar = r.par(mfrow=[min(3, len(tenx_sample_infos)), 2])
-        oldpar = r.par(mfrow=[2,1])
+        oldpar = ro.r.par(mfrow=[2,1])
 
         for name, tenx_sample_info in tenx_sample_infos.items():
             C_Rs = tenx_sample_info["coverage_of_fragments"]
             C_Rs = C_Rs["coverages"] / C_Rs["lengths"].astype(float)
 
-            r.hist(C_Rs, breaks=50, xlab="Fragment coverage by short-reads (C_R)", main=name)
-            r.hist(tenx_sample_info["physical_depths"], breaks=100, xlab="Coverage by long fragments (C_F)",
+            ro.r.hist(ro.FloatVector(C_Rs), breaks=50, xlab="Fragment coverage by short-reads (C_R)", main=name)
+            ro.r.hist(ro.FloatVector(tenx_sample_info["physical_depths"]), breaks=100, xlab="Coverage by long fragments (C_F)",
                 main=name)
 
-        r.par(oldpar)
+        ro.r.par(oldpar)
 
-        r.devoff()
-    except ImportError:
-        open(outpath, "w")
+        ro.r["dev.off"]()
+    except:
+        with open(outpath, "w") as f:
+            f.write("[the visual report requires rpy2 to be correctly installed]")
+    

@@ -68,11 +68,15 @@ class RefineBreakpointsWithAssembliesStep(step.StepChunk):
         significant_events = significant_events[["chromx", "x", "chromy", "y", "orientation", "facing"]]
         significant_events["x"] = significant_events["x"].astype(int)
         significant_events["y"] = significant_events["y"].astype(int)
+        significant_events["chromx"] = significant_events["chromx"].astype("string")
+        significant_events["chromy"] = significant_events["chromy"].astype("string")
         significant_events = significant_events.drop_duplicates()
 
         assemblies_path = walk_assemblies.WalkAssembliesStep(self.options) \
                               .outpaths(final=True)["walk_assemblies"]
         assembly_evidence = pandas.read_table(assemblies_path)
+        assembly_evidence["chromx"] = assembly_evidence["chromx"].astype("string")
+        assembly_evidence["chromy"] = assembly_evidence["chromy"].astype("string")
 
         return significant_events, assembly_evidence
 

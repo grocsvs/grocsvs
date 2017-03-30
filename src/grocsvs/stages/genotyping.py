@@ -47,7 +47,9 @@ class MergeGenotypesStep(step.StepChunk):
             genotypes.append(pandas.read_table(inpath))
 
         genotypes = pandas.concat(genotypes, ignore_index=True)
-
+        genotypes["chromx"] = genotypes["chromx"].astype("string")
+        genotypes["chromy"] = genotypes["chromy"].astype("string")
+        
         counts = genotypes.groupby("cluster").count()["total"]
 
         for row in genotypes.itertuples():
@@ -95,7 +97,7 @@ class GenotypingStep(step.StepChunk):
 
         self.logger.log("Genotyping...")
         genotypes = genotype_breakpoints(breakpoints, self.options)
-
+        
         columns = [c for c in self.get_columns() if c in genotypes]
         genotypes = genotypes[columns]
 
@@ -128,13 +130,15 @@ def load_events(options, chunk=None):
     final_clustering_step = final_clustering.FinalClusterSVsStep(options)
     clustered_events_path = final_clustering_step.outpaths(final=True)["edges"]
     clustered_events = pandas.read_table(clustered_events_path)
+    clustered_events["chromx"] = clustered_events["chromx"].astype("string")
+    clustered_events["chromy"] = clustered_events["chromy"].astype("string")
 
     if chunk is not None:
         clustered_events = clustered_events.iloc[chunk*CHUNKSIZE:((chunk+1)*CHUNKSIZE)]
     # if self.options.debug:
     #     self.logger.log("LOADING ONLY 100 EVENTS....")
     #     clustered_events = clustered_events.iloc[:100]
-
+    
     return clustered_events
 
 # def get_good_bc_counts_by_dataset(options):
@@ -173,7 +177,7 @@ def genotype_breakpoints(breakpoints, options):
         genotype["kind"] = "breakpoint"
         genotype["cluster"] = breakpoint.cluster
         genotype["assembled"] = breakpoint.assembled
-
+        
         genotypes.append(genotype)
 
     genotypes = pandas.DataFrame(genotypes)
@@ -205,10 +209,12 @@ def compare_to_blacklist(genotypes, options, distance=10000):
             close = c.loc[c["distance"].abs() < distance]
             for row in close.itertuples():
                 bad[row.event_id].add(row.black_type)
-
+    
     genotypes["blacklist"] = ""
     genotypes["quality"] = "PASS"
+    
     for event_id, reasons in bad.items():
+        if event_id not in genotypes.index: continue
         genotypes.loc[event_id, "blacklist"] = ",".join(sorted(set(reasons)))
         genotypes.loc[event_id, "quality"] = "FAIL"
 
@@ -265,7 +271,7 @@ def segdup_detector(genotypes, options):
 
 def count_nearby_snvs(options, chrom, pos):
     nearby_snvs = 0
-    start = pos - 500
+    start = max(0, pos - 500)
     end = pos + 500
 
     for sample, dataset in options.iter_10xdatasets():
@@ -280,7 +286,7 @@ def count_nearby_snvs(options, chrom, pos):
 
         # ref_counts = numpy.sum(ref_counts, axis=0)
         # non_ref_counts = numpy.sum(non_ref_counts, axis=0)
-    
+
         cur_nearby_snvs = (cur_non_ref_counts/(cur_non_ref_counts+cur_ref_counts).astype(float) > 0.20).sum()
         nearby_snvs = max(nearby_snvs, cur_nearby_snvs)
         
@@ -315,7 +321,7 @@ def count_ref_reads(bampath, reference, chrom, start, end):
 
 def count_nearby_Ns(options, genotypes):
     nearby_Ns = []
-
+    
     for i, event in genotypes.iterrows():
         chromx, startx, endx = event["chromx"], event["x"]-5000, event["x"]+5000
         chromy, starty, endy = event["chromy"], event["y"]-5000, event["y"]+5000

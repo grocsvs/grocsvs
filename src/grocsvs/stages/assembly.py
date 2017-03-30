@@ -18,6 +18,9 @@ class AssemblyStep(step.StepChunk):
     def get_steps(options):
         edges_path = cluster_svs.ClusterSVsStep(options).outpaths(final=True)["edges"]
         graphs_table = pandas.read_table(edges_path)
+        graphs_table["chromx"] = graphs_table["chromx"].astype("string")
+        graphs_table["chromy"] = graphs_table["chromy"].astype("string")
+
         clusters = sorted(graphs_table["cluster"].unique())
 
         for cluster in clusters:

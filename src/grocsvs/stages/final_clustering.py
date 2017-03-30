@@ -89,7 +89,8 @@ def load_evidence(options):
         path = input_step.outpaths(final=True)["refined_pairs"]
         try:
             evidence = pandas.read_table(path)
-            evidences.append(evidence)
+            if len(evidence) > 0:
+                evidences.append(evidence)
         except ValueError:
             print "empty file", path
             print open(path).read()
@@ -99,14 +100,19 @@ def load_evidence(options):
                                         "original_y":"clustered_y",
                                         "p_resampling":"p"})
 
+    if "chromx" in evidence.columns:
+        evidence["chromx"] = evidence["chromx"].astype("string")
+        evidence["chromy"] = evidence["chromy"].astype("string")
     print evidence
+    
     return evidence
 
 def load_assembly_evidence(options):
     path = walk_assemblies.WalkAssembliesStep(options) \
                           .outpaths(final=True)["walk_assemblies"]
     evidence = pandas.read_table(path)
-
+    evidence["chromx"] = evidence["chromx"].astype("string")
+    evidence["chromy"] = evidence["chromy"].astype("string")
     return evidence
 
 

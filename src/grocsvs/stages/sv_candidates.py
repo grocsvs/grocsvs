@@ -126,6 +126,9 @@ class SVCandidatesStep(step.StepChunk):
         else:
             candidate_regions = pandas.read_table(path)
 
+            candidate_regions["chromx"] = candidate_regions["chromx"].astype("string")
+            candidate_regions["chromy"] = candidate_regions["chromy"].astype("string")
+
         if self.chromx == self.chromy:
             diagonal = []
             chrom_length = self.options.reference.chrom_lengths[self.chromx]
@@ -142,6 +145,7 @@ class SVCandidatesStep(step.StepChunk):
 
             candidate_regions = pandas.concat([candidate_regions, diagonal])
 
+        
         return candidate_regions
 
 
@@ -315,10 +319,9 @@ def get_svs(mat, bg_mat, sv_region, window_size, rolling=0):
     breakpoints = []
 
     while not norm.mask.all():
-        where = numpy.where(norm==norm.max())
+        where = numpy.ma.where(norm==norm.max())
         where = (where[0][0], where[1][0])
-
-        # TODO: constants
+        
         is_good = (mat[where] > 25 and norm[where] > 0.05)
         
         if is_good:
