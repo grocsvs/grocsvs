@@ -86,6 +86,8 @@ Each dataset is defined as a hash. 10x datasets must define the following items:
 * ``id``: this is a name used to identify the dataset; typically, it would be something like "``sample_name_10x``"
 * ``type``: this should be the string "``TenXDataset``"
 
+**Tumor/normal, trio and other multi-sample analyses** GROC-SVs performs variant calling jointly on all samples specified in the configuration.json file, and no additional arguments are required to indicate the biological meaning of the sample. See the Output section below for descriptions of the "genotypes.tsv" and "classes.txt" files, which can be filtered in order to obtain events that are somatic (ie private to the tumor, and not present in the germline sample) or de novo in the child (ie private to the child and not present in either parent).
+
 **Compute cluster settings** This has defines the compute environment being used to perform the analysis. A standard cluster setup looks like this:
 
 .. code-block:: json
@@ -127,6 +129,7 @@ Final results of interest might be:
 * ``results/QCStep/qc_report.tsv``: some basic quality control statistics, including fragment lengths and number of barcodes per sample
 * ``results/AssemblyStep/assembly.i``: the sequence assemblies for event ``i``; in this directory, ``contigs.sorted.bam`` contain the contigs aligned back to the reference genome (this file may be viewed with `IGV <https://www.broadinstitute.org/igv/>`_)
 * ``results/FinalClusterSVsStep/edges.tsv``: full information relating breakpoints in complex structural variants
+* ``results/PostprocessingStep/classes.txt``: this file includes a simple presence/absence call for each structural variant for each sample, denoted as a 0 for absence and a 1 for presence. For example, if your tumor sample were the first sample, and the matched normal sample were the second sample, a "10" would indicate a somatic event and a "11" would indicate a germline event. These classes are determined using a simple allele-frequency cutoff which in our experience has been quite robust. More statistically motivated filters can be established by filtering on the p-values for each sample, which are indicated in this file as "sarcoma_p_resampling" if your sample name were "sarcoma" (note that missing p-values should be treated as 1).
 
 
 Docker (and example dataset)
