@@ -17,6 +17,8 @@ except ImportError:
 assert pickle.HIGHEST_PROTOCOL >= 2, \
     "A relatively recent version of pickle is required"
 
+class BinaryNotFoundError(Exception):
+    pass
 
 def ensure_dir(directory):
     try:

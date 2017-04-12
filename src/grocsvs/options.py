@@ -193,8 +193,9 @@ class Options(object):
         
         bin_path = self.binaries.get(name, name)
         if utilities.which(bin_path) is None:
-            raise Exception("Failed to locate binary '{}'; please make sure it is in ".format(name) + 
-                            "your $PATH or add it to the configuration.json file")
+            raise utilities.BinaryNotFoundError(
+                "Failed to locate binary '{}'; please make sure it is in ".format(name) + 
+                "your $PATH or add it to the configuration.json file")
         return bin_path
 
 

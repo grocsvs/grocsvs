@@ -1,3 +1,5 @@
+from grocsvs.stages import preflight
+
 from grocsvs.stages import constants
 from grocsvs.stages import sample_info
 from grocsvs.stages import qc

@@ -76,7 +76,7 @@ The configuration file is in the `JSON <http://www.json.org>`_ format, and conta
 In addition, the following optional paths may be specified:
 
 * ``blacklists``: a list of paths of blacklist regions, either `bed <https://genome.ucsc.edu/FAQ/FAQformat.html>`_ or `bedpe <http://bedtools.readthedocs.io/en/latest/content/general-usage.html#bedpe-format>`_ format
-* ``binaries``: a hash containing paths for any of the following binaries: ``idba_ud``, ``bwa``, ``samtools``. If these are in your ``$PATH``, there is no need to specify them in the configuration file.
+* ``binaries``: a hash containing paths for any of the following binaries: ``idba_ud``, ``bwa``, ``samtools``, ``bgzip``, ``tabix``. If these are in your ``$PATH``, there is no need to specify them in the configuration file.
 
 **Sample information** Samples is a hash with key specifying sample name, and the value is a list of datasets. Each sample must have one 10x dataset specified, and may optionally specify a separate standard Illumina short-frag library or a mate-pair library (these are used for validation and comparison only).
 

@@ -68,6 +68,8 @@ def get_stages():
 
     # Pre-processing
 
+    stages["Preflight"] = svstages.preflight.PreflightStep
+
     stages["Constants"] = svstages.constants.ConstantsStep
     stages["Estimate Read Cloud Parameters"] = svstages.call_readclouds.EstimateReadCloudParamsStep
     stages["Call Read Clouds"] = svstages.call_readclouds.CallReadcloudsStep

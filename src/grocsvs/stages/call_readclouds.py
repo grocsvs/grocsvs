@@ -81,7 +81,8 @@ class CombineReadcloudsStep(step.StepChunk):
         tmp_readclouds_path = outpaths["readclouds"][:-3]
         readclouds.to_csv(tmp_readclouds_path, sep="\t", index=False)
 
-        bgzip_cmd = "bgzip {}".format(tmp_readclouds_path)
+        bgzip = self.options.binary("bgzip")
+        bgzip_cmd = [bgzip, tmp_readclouds_path]
         bgzip_proc = subprocess.Popen(bgzip_cmd, shell=True)
         bgzip_proc.wait()
 
@@ -89,7 +90,8 @@ class CombineReadcloudsStep(step.StepChunk):
         self.logger.log("Indexing readclouds file...")
         # define the chrom, start and end columns; and indicate that
         # the first (header) row should be skipped
-        tabix_cmd = "tabix -s 1 -b 2 -e 3 -S 1 {}".format(outpaths["readclouds"])
+        tabix = self.options.binary("tabix")
+        tabix_cmd = "{} -s 1 -b 2 -e 3 -S 1 {}".format(tabix, outpaths["readclouds"])
         subprocess.check_call(tabix_cmd, shell=True)
 
 
