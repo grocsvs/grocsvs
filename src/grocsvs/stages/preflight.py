@@ -108,7 +108,7 @@ class PreflightStep(step.StepChunk):
         if not os.path.exists(outpath):
             return False, "ERROR: idba_ud failed to produce final assembly; please make sure it is installed and runs\n" +\
                           "correctly; here is the output of the command:\n{}".format(stderr)
-        return True, "idba_ud runs and is able to compile reads of length 250."
+        return True, "idba_ud runs and is able to compile reads of length 160."
 
     def check_memory(self):
         import psutil
