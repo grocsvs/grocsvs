@@ -92,8 +92,8 @@ class PreflightStep(step.StepChunk):
 
         reads_file_path = os.path.join(self.working_dir, "reads.fa")
         with open(reads_file_path, "w") as reads_file:
-            read1 = "ACGTGGCGAG"*25
-            read2 = "GGACGACCCA"*25
+            read1 = "ACGTGGCGAG"*16
+            read2 = "GGACGACCCA"*16
             reads_file.write(">read1\n{}\n>read2\n{}\n".format(read1, read2))
 
         command = "{} -r {} -o {}".format(idba_ud, reads_file_path, self.working_dir)
