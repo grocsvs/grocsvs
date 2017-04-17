@@ -82,7 +82,7 @@ class CombineReadcloudsStep(step.StepChunk):
         readclouds.to_csv(tmp_readclouds_path, sep="\t", index=False)
 
         bgzip = self.options.binary("bgzip")
-        bgzip_cmd = [bgzip, tmp_readclouds_path]
+        bgzip_cmd = "{} {}".format(bgzip, tmp_readclouds_path)
         bgzip_proc = subprocess.Popen(bgzip_cmd, shell=True)
         bgzip_proc.wait()
 
