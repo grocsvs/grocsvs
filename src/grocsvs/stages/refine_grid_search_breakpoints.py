@@ -45,8 +45,10 @@ class CombineRefinedBreakpointsStep(step.StepChunk):
             input_step = RefineGridSearchBreakpointsStep(self.options, chromx, chromy)
             inpath = input_step.outpaths(final=True)["refined_pairs"]
 
-            if os.stat(inpath).st_size > 0:
+            try:
                 inputs.append(pandas.read_table(inpath))
+            except pandas.io.common.EmptyDataError:
+                pass
         if len(inputs) == 0:
             raise Exception("No candidate SVs discovered.")
 
@@ -117,8 +119,10 @@ class RefineGridSearchBreakpointsStep(step.StepChunk):
 
             input_step = sv_candidates.SVCandidatesStep(self.options, sample, dataset, self.chromx, self.chromy)
             inpath = input_step.outpaths(final=True)["svs"]
-            if os.stat(inpath).st_size > 0:
+            try:
                 cur_events.append(pandas.read_table(inpath))
+            except pandas.io.common.EmptyDataError:
+                pass
 
         if len(cur_events) > 0:
             significant_events = combine_nearby_events(pandas.concat(cur_events))

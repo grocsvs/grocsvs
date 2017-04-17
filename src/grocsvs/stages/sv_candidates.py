@@ -118,16 +118,19 @@ class SVCandidatesStep(step.StepChunk):
         path = inpaths["sv_regions"]
 
 
-        if os.stat(path).st_size == 0:
+        # if os.stat(path).st_size == 0:
 
-        # if True:
-            # print "SKIPPING "*1000
-            candidate_regions = pandas.DataFrame()
-        else:
+        # # if True:
+        #     # print "SKIPPING "*1000
+        #     candidate_regions = pandas.DataFrame()
+        # else:
+        try:
             candidate_regions = pandas.read_table(path)
 
             candidate_regions["chromx"] = candidate_regions["chromx"].astype("string")
             candidate_regions["chromy"] = candidate_regions["chromy"].astype("string")
+        except pandas.io.common.EmptyDataError:
+            candidate_regions = pandas.DataFrame()
 
         if self.chromx == self.chromy:
             diagonal = []
