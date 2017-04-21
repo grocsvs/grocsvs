@@ -98,11 +98,14 @@ Each dataset is defined as a hash. 10x datasets must define the following items:
         "cluster_options": {
             "scheduler": "slurm",
             "queue": "normal",
+            "start_wait": 120,
             "extra_params": {"mem":16}
         }
     }
 
 Where ``processes`` specifies the maximum number of separate jobs (1 processor per job) to allow. ``scheduler`` may be any of the clusters supported by `ipython-cluster-helper <https://github.com/roryk/ipython-cluster-helper>`_. Currently, these are Platform LSF ("lsf"), Sun Grid Engine ("sge"), Torque ("torque"), and SLURM ("slurm").
+
+Note that the optional ``start_wait`` parameter determines how long grocsvs will wait for jobs to start running after they have been submitted to the scheduler. If you expect particularly long queueing times, you can set this to a much higher value - the default is 16 minutes (rather short for most cluster setups!) and as shown in the example above, it's been set to 120 minutes.
 
 To run in parallel on a single machine, use ``cluster_type":"multiprocessing"`` and specify the desired number of ``processes``.
 
