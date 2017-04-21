@@ -30,7 +30,7 @@ RUN wget https://github.com/samtools/htslib/releases/download/1.3.2/htslib-1.3.2
 RUN pip install -U pip
 
 RUN mkdir grocsvs_src && cd grocsvs_src \
-     && wget https://github.com/grocsvs/grocsvs/archive/v0.2.3.tar.gz -O grocsvs.tar.gz \
+     && wget https://github.com/grocsvs/grocsvs/archive/v0.2.4.tar.gz -O grocsvs.tar.gz \
      && tar -xf grocsvs.tar.gz --strip-components 1 \
      && pip install -r requirements.txt \
      && pip install -vvv .

@@ -279,7 +279,7 @@ def get_breakpoint(frags, pos, orientation, extend=20000):
         curstart = max(frag["start_pos"]-(pos-extend), 0)
         curend = min(frag["end_pos"]-(pos-extend), len(density))
 
-        density[curstart:curend] += 1
+        density[int(curstart):int(curend)] += 1
 
     peaks = numpy.where(density>(0.9*density.max()))[0]
     if orientation == "+":
