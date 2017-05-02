@@ -25,4 +25,5 @@ from grocsvs.stages import final_clustering
 
 from grocsvs.stages import genotyping
 from grocsvs.stages import postprocessing
+from grocsvs.stages import visualize
 

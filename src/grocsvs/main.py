@@ -131,8 +131,8 @@ def get_stages():
     stages["Genotyping"] = svstages.genotyping.GenotypingStep
     stages["Merge Genotypes"] = svstages.genotyping.MergeGenotypesStep
     
-    #stages["Visualize"] = svstages.visualize.VisualizeStep
     stages["Postprocessing"] = svstages.postprocessing.PostprocessingStep
+    stages["Visualize"] = svstages.visualize.VisualizeStep
 
     return stages
 

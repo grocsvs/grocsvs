@@ -507,16 +507,17 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
                 coverage_normalizations=None, normalize_coverage_to=None):
 
     # TODO: biorpy required
-    from biorpy import r
+    # from biorpy import r
 
-    oldpar = r.par(mfrow=[2, len(breakpoints_to_frags)],
-                   mar=[5,4,4,0])
+    from rpy2 import robjects as ro
+    oldpar = ro.r.par(mfrow=ro.IntVector([2, len(breakpoints_to_frags)]),
+                      mar=ro.FloatVector([5,4,4,0]))
     
     windows = []
 
     for i, (breakpoint, frags) in enumerate(breakpoints_to_frags.items()):
         if i > 0:
-            r.par(mar=[5,2,4,0])
+            ro.r.par(mar=ro.FloatVector([5,2,4,0]))
         chrom, position, orientation = breakpoint[0]
         islast = (i == len(breakpoints_to_frags)-1)
         isreversed = is_reversed(breakpoint, islast)
@@ -535,13 +536,13 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
         if len(bcs_to_rows) > 0:
             ylim = [0,max(bcs_to_rows.values())]
 
-        r.plot(numpy.array([0]),
-               type="n", bty="n",
-               xlim=xlim,
-               ylim=ylim,
-               xlab="{} (mb)".format(chrom), ylab="Barcode")
+        ro.r.plot(ro.FloatVector([0]),
+                  type="n", bty="n",
+                  xlim=ro.FloatVector(xlim),
+                  ylim=ro.FloatVector(ylim),
+                  xlab="{} (mb)".format(chrom), ylab="Barcode")
         
-        r.abline(v=breakpoint_lines/scale, lty=2, col="gray")
+        ro.r.abline(v=ro.FloatVector(breakpoint_lines/scale), lty=2, col="gray")
 
         if len(bcs_to_rows) == 0:
             continue
@@ -554,12 +555,12 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
                 support.append("background")
             elif numpy.isnan(row.hap):
                 support.append("nohap")
-            elif row.hap == 0:
-                support.append("hap0")
             elif row.hap == 1:
+                support.append("hap0")
+            elif row.hap == 2 or row.hap == 0:
                 support.append("hap1")
             else:
-                raise Exception("{}????".format(row))
+                raise Exception("can't interpret hap: {}".format(row))
 
         frags = frags.copy()
         frags["support"] = support
@@ -580,14 +581,14 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
         for support_type, color in zip(support_types, colors):
             cur_frags = frags.loc[frags["support"]==support_type]
 
-            r.segments(
-                cur_frags["start_pos"].values/scale, cur_frags["ypos"],
-                cur_frags["end_pos"].values/scale, cur_frags["ypos"],
+            ro.r.segments(
+                ro.FloatVector(cur_frags["start_pos"].values/scale), ro.FloatVector(cur_frags["ypos"]),
+                ro.FloatVector(cur_frags["end_pos"].values/scale), ro.FloatVector(cur_frags["ypos"]),
                 col=color)
 
     plot_coverage(windows, options, sample, dataset, coverage_normalizations, normalize_coverage_to)
 
-    r.par(oldpar)
+    ro.r.par(oldpar)
     
 def plot_frags(cluster, options, sample, dataset, coverage_normalizations=None, normalize_coverage_to=None, reverse_order=False):
     if len(cluster) > 1:
@@ -644,7 +645,8 @@ def plot_coverage(windows, options, sample, dataset, coverage_normalizations, no
     coverage_normalizations - dictionary of constants to use to normalize coverage profiles (optional)
     normalize_coverage_to - path of normal bam (optional)
     """
-    from biorpy import r
+    # from biorpy import r
+    from rpy2 import robjects as ro
 
     if not isinstance(dataset, svdatasets.ShortFragDataset):
         for d in sample.datasets:
@@ -700,9 +702,9 @@ def plot_coverage(windows, options, sample, dataset, coverage_normalizations, no
     for i, window in enumerate(windows):
         if i == 0:
             # TODO: fix 
-            r.par(mar=[5,4,4,0])
+            ro.r.par(mar=ro.FloatVector([5,4,4,0]))
         else:
-            r.par(mar=[5,2,4,0])
+            ro.r.par(mar=ro.FloatVector([5,2,4,0]))
         chrom, position, isreversed, breakpoint_lines = window
         start, end = position-extend, position+extend
 
@@ -711,13 +713,15 @@ def plot_coverage(windows, options, sample, dataset, coverage_normalizations, no
         if isreversed:
             xlim = xlim[::-1]
 
-        r.plot(numpy.array(xs[i])/scale, event_coverages[i].values,
-            xlim=numpy.array(xlim)/scale,
-            ylim=numpy.array(ylim),
+        ro.r.plot(
+            ro.FloatVector(numpy.array(xs[i])/scale),
+            ro.FloatVector(event_coverages[i].values),
+            xlim=ro.FloatVector(numpy.array(xlim)/scale),
+            ylim=ro.FloatVector(numpy.array(ylim)),
             type="n",
             bty="n", xlab="{} (mb)".format(chrom), ylab="Copy number", main="")
 
-        r.abline(v=breakpoint_lines/scale, lty=2, col="gray")
-        r.abline(h=numpy.arange(0,10), lty=2, col="gray")
+        ro.r.abline(v=ro.FloatVector(breakpoint_lines/scale), lty=2, col="gray")
+        ro.r.abline(h=ro.FloatVector(numpy.arange(0,10)), lty=2, col="gray")
 
-        r.lines(numpy.array(xs[i])/scale, event_coverages[i].values, lwd=2)
+        ro.r.lines(ro.FloatVector(numpy.array(xs[i])/scale), ro.FloatVector(event_coverages[i].values), lwd=2)
