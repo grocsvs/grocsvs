@@ -1,7 +1,7 @@
 GROC-SVs
 --------
 
-Genome-wide Reconstruction of Complex Structural Variants, or GROC-SVs, is a software pipeline for identifying structural variants, performing sequence assembly at the breakpoints, and reconstructing the complex structural variants using the long-fragment information from the 10x Genomics platform.
+Genome-wide Reconstruction of Complex Structural Variants, or GROC-SVs, is a software pipeline for identifying large-scale structural variants, performing sequence assembly at the breakpoints, and reconstructing the complex structural variants using the long-fragment information from the 10x Genomics platform.
 
 
 Installation

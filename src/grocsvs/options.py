@@ -133,6 +133,9 @@ class Options(object):
         options.cluster_settings = ClusterSettings.deserialize(
             options_dict.get("cluster_settings", {}))
 
+        options.flip_matepair_orientation = get_key(
+            options_dict, "flip_matepair_orientation",bool, default=False)
+
         return options
 
     def iter_10xdatasets(self):

@@ -146,6 +146,8 @@ class PostprocessingStep(step.StepChunk):
         if frag_type == "mp":
             max_ins = 10000
             backwards = False
+            if self.options.flip_matepair_orientation:
+                backwards = True
         elif frag_type == "sf":
             max_ins = 1000
             backwards = True
