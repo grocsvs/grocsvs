@@ -26,9 +26,9 @@ class VisualizeStep(step.StepChunk):
         if ro is None:
             return
 
-        genotypes = load_genotypes(options)
+        edges = load_edges(options)
 
-        for cluster in genotypes["cluster"].unique():
+        for cluster in edges["cluster"].unique():
             yield VisualizeStep(options, cluster)
 
     def __init__(self, options, cluster):
@@ -54,8 +54,8 @@ class VisualizeStep(step.StepChunk):
     def run(self):
         # open(self.outpaths(final=False)["visualization"], "w")
 
-        genotypes = load_genotypes(self.options)
-        cluster = genotypes.loc[genotypes["cluster"]==self.cluster]
+        edges = load_edges(self.options)
+        cluster = edges.loc[edges["cluster"]==self.cluster]
         # breakpoints = get_cluster_breakpoints(self.options, self.cluster)
 
         from rpy2.robjects import r
@@ -72,11 +72,16 @@ class VisualizeStep(step.StepChunk):
         r["dev.off"]()
 
 
-def load_genotypes(options):
-    genotyping_step = genotyping.MergeGenotypesStep(options)
-    genotypes = pandas.read_table(
-        genotyping_step.outpaths(final=True)["genotypes"])
-    return genotypes
+def load_edges(options):
+    clustering_step = final_clustering.FinalClusterSVsStep(options)
+    edges = pandas.read_table(
+        clustering_step.outpaths(final=True)["edges"])
+
+    return edges
+    # genotyping_step = genotyping.MergeGenotypesStep(options)
+    # genotypes = pandas.read_table(
+    #     genotyping_step.outpaths(final=True)["genotypes"])
+    # return genotypes
 
 
 def get_cluster_breakpoints(options, cluster):
