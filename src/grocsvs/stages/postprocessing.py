@@ -8,6 +8,7 @@ from grocsvs import step
 from grocsvs import datasets as svdatasets
 from grocsvs.stages import genotyping
 from grocsvs.stages import mate_pair_evidence
+from grocsvs.stages import export_vcf
 
 pandas.options.display.max_rows = 250
 pandas.options.display.width = 250
@@ -43,7 +44,8 @@ class PostprocessingStep(step.StepChunk):
 
         paths = {
             "summary": os.path.join(directory, "summary.txt"),
-            "classes": os.path.join(directory, "classes.txt")
+            "classes": os.path.join(directory, "classes.txt"),
+            "vcf":     os.path.join(directory, "svs.vcf"),
         }
 
         if len(self.get_mate_pair_datasets()) > 0:
@@ -60,6 +62,7 @@ class PostprocessingStep(step.StepChunk):
         
         # self.frag_length_filter(genotype_data)
 
+        self.convert_to_vcf(genotype_data)
         short_frag_comparison = self.compare_to_frag_libraries(genotype_data)
         #validation = self.validate(genotype_data)
         # self.logger.log("skipping validation!")
@@ -69,6 +72,15 @@ class PostprocessingStep(step.StepChunk):
         self.summarize_classes(genotype_data, short_frag_comparison)
 
                 
+    def convert_to_vcf(self, genotypes):
+        outpath = self.outpaths(final=False)["vcf"]
+
+        with open(outpath, "w") as outfile:
+            for line in export_vcf.convert_to_vcf(self.options, genotypes):
+                outfile.write(line+"\n")
+                print(line)
+
+
     def get_mate_pair_datasets(self):
         # figure out which samples have mate-pair datasets
         mp_datasets = {}
