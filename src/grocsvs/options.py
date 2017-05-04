@@ -237,3 +237,10 @@ def validate_options(options):
         if tenx_count > 1:
             raise Exception(
                 "Not yet implemented -- multiple 10X datasets per sample")
+
+    nchroms = len(options.reference.chroms)
+    if nchroms > 40:
+        print("WARNING: Your reference genome contains a large number of chromosomes/contigs: {}".format(
+            nchroms))
+        print("         Performance may be affected. To improve performance, reduce the number")
+        print("         of chromosomes in the reference fasta (eg, remove small contigs or alt chromosomes.)")
