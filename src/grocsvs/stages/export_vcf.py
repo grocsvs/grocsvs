@@ -81,8 +81,11 @@ def get_sample_info(sample, event):
 def get_filters(event):
     filters = []
 
-    if not numpy.isnan(event["blacklist"]) and "n=" in event["blacklist"]:
-        filters.append("NEAR_REF_GAP")
+    try:
+        if "n=" in event["blacklist"]:
+            filters.append("NEAR_REF_GAP")
+    except TypeError:
+        pass
 
     if len(filters) == 0:
         return "PASS"

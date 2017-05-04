@@ -133,8 +133,8 @@ class Options(object):
         options.cluster_settings = ClusterSettings.deserialize(
             options_dict.get("cluster_settings", {}))
 
-        options.flip_matepair_orientation = get_key(
-            options_dict, "flip_matepair_orientation",bool, default=False)
+        options.flip_matepair_orientation = bool(get_key(
+            options_dict, "flip_matepair_orientation", default="True"))
 
         return options
 

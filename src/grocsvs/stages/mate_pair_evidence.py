@@ -118,7 +118,7 @@ def _coords(position, orientation, dist1, dist2):
 
     return start, end
 
-def get_evidence(chromx, x, chromy, y, orientationx, orientationy, bam, max_ins, imprecision, backwards=False):
+def get_evidence(chromx, x, chromy, y, orientationx, orientationy, bam, max_ins, imprecision, backwards=False, min_mapq=55):
     extend = max_ins * 2 + imprecision
     startx, endx = _coords(x, orientationx, -imprecision, extend)
     starty, endy = _coords(y, orientationy, -imprecision, extend)
@@ -128,11 +128,11 @@ def get_evidence(chromx, x, chromy, y, orientationx, orientationy, bam, max_ins,
         orientationx = flip[orientationx]
         orientationy = flip[orientationy]
         
-    return _get_evidence(chromx, startx, endx, chromy, starty, endy, orientationx, orientationy, bam)
+    return _get_evidence(chromx, startx, endx, chromy, starty, endy, orientationx, orientationy, bam, min_mapq)
 
-def _get_evidence(chromx, startx, endx, chromy, starty, endy, orientationx, orientationy, bam):
-    readsx = get_reads(bam, chromx, startx, endx, orientationx)
-    readsy = get_reads(bam, chromy, starty, endy, orientationy)
+def _get_evidence(chromx, startx, endx, chromy, starty, endy, orientationx, orientationy, bam, min_mapq=55):
+    readsx = get_reads(bam, chromx, startx, endx, orientationx, min_mapq)
+    readsy = get_reads(bam, chromy, starty, endy, orientationy, min_mapq)
 
     common = len(readsx.intersection(readsy))
     union = len(readsx.union(readsy))

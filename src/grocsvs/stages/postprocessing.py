@@ -78,7 +78,6 @@ class PostprocessingStep(step.StepChunk):
         with open(outpath, "w") as outfile:
             for line in export_vcf.convert_to_vcf(self.options, genotypes):
                 outfile.write(line+"\n")
-                print(line)
 
 
     def get_mate_pair_datasets(self):
@@ -143,11 +142,13 @@ class PostprocessingStep(step.StepChunk):
     def do_comparisons(self, event, frag_datasets, frag_type):
         samples_to_results = {}
 
+        min_mapq = 55
         if frag_type == "mp":
             max_ins = 10000
             backwards = False
             if self.options.flip_matepair_orientation:
                 backwards = True
+                min_mapq = 25
         elif frag_type == "sf":
             max_ins = 1000
             backwards = True
@@ -170,7 +171,7 @@ class PostprocessingStep(step.StepChunk):
                 result = mate_pair_evidence.get_evidence(
                     event["chromx"], event["x"], event["chromy"], event["y"],
                     event["orientation"][0], event["orientation"][1],
-                    bam, max_ins, imprecision, backwards=backwards)
+                    bam, max_ins, imprecision, backwards=backwards, min_mapq=min_mapq)
             except ValueError:
                 # TODO: should handle different chrom names (eg "1" vs "chr1") better here
                 chromx = str(event["chromx"]).replace("chr", "")
@@ -178,7 +179,7 @@ class PostprocessingStep(step.StepChunk):
                 result = mate_pair_evidence.get_evidence(
                     chromx, event["x"], chromy, event["y"],
                     event["orientation"][0], event["orientation"][1],
-                    bam, max_ins, imprecision, backwards=backwards)
+                    bam, max_ins, imprecision, backwards=backwards, min_mapq=min_mapq)
                 
             samples_to_results["{}_shared_{}".format(sample.name, frag_type)] = result[0]
             samples_to_results["{}_total_{}".format(sample.name, frag_type)] = result[1]
