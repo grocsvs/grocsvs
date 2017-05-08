@@ -362,9 +362,9 @@ def quantify_breakpoint(chromx, x, chromy, y, orientation,
 
 
         if with_phasing:
-            cur_result["{}_x_hap0".format(sample.name)] = (merged["hap_x"] == 0).sum()
+            cur_result["{}_x_hap0".format(sample.name)] = (merged["hap_x"].isin([0,2])).sum()
             cur_result["{}_x_hap1".format(sample.name)] = (merged["hap_x"] == 1).sum()
-            cur_result["{}_y_hap0".format(sample.name)] = (merged["hap_y"] == 0).sum()
+            cur_result["{}_y_hap0".format(sample.name)] = (merged["hap_y"].isin([0,2])).sum()
             cur_result["{}_y_hap1".format(sample.name)] = (merged["hap_y"] == 1).sum()
 
         # TODO: constants should be constant across steps!
