@@ -120,7 +120,7 @@ class PreflightStep(step.StepChunk):
         if physical_mem_gb < 16:
             return True, "WARNING: it is suggested to run grocsvs with at least 16GB of memory; I detect only {:.1f}GB present".format(
                 physical_mem_gb)
-        return True, "Detected {:.1f}GB available. This should be sufficient unless genome coverage is very high.".format(physical_mem_gb)
+        return True, "Detected {:.1f}GB of available memory. This should be sufficient unless genome coverage is very high.".format(physical_mem_gb)
 
     def check_rpy2(self):
         try:

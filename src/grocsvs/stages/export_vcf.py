@@ -12,16 +12,26 @@ VCF_HEADER = \
 ##INFO=<ID=ASSEMBLED,Number=0,Type=Flag,Description="Event is supported by a read-cloud-based sequence assembly across the breakpoints"> 
 ##INFO=<ID=MATEID,Number=1,Type=String,Description="ID of mate breakend">
 ##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
+##FILTER=<ID=NOLONGFRAGS,Description="No samples found with long fragments supporting event (likely segdup)">
+##FILTER=<ID=NEARBYSNVS,Description="Very high number of possible SNVs detected in vicinity of breakpoint (likely segdup)">
+##FILTER=<ID=ASSEMBLYGAP,Description="Nearby gap in the reference assembly found; these gaps can appear to mimic SVs">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype"> 
-##FORMAT=<ID=BS,Number=1,Type=int,Description="Number of barcodes shared between loci"> 
-##FORMAT=<ID=BT,Number=1,Type=int,Description="Total number of barcodes between the loci (union)"> 
+##FORMAT=<ID=BS,Number=1,Type=int,Description="Number of barcodes supporting the event"> 
+##FORMAT=<ID=BT,Number=1,Type=int,Description="Total number of barcodes, calculated as the union of barcodes at each site"> 
+##FORMAT=<ID=F50,Number=1,Type=Float,Description="Median fragment length supporting the breakpoint; estimated as the total across all supporting segments"> 
+##FORMAT=<ID=F90,Number=1,Type=Float,Description="90th percentile of fragment lengths supporting the breakpoint; estimated as the total across all supporting segments"> 
+##FORMAT=<ID=PR,Number=1,Type=Float,Description="p-value for the event, calculated by resampling from the number of supporting and total barcodes">
+##FORMAT=<ID=H1x,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 1 (left side of breakpoint)">
+##FORMAT=<ID=H2x,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 2 (left side of breakpoint)">
+##FORMAT=<ID=H1y,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 1 (right side of breakpoint)">
+##FORMAT=<ID=H2y,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 2 (right side of breakpoint)">
 {samples}
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{sample_columns}
 """
 
 CHROMOSOME = "##contig=<ID={name},length={length}>"
 SAMPLE = "##SAMPLE=<ID={name},URL=file://{path}>"
-FORMAT = "GT:BS:BT"
+FORMAT = ["GT", "BS", "BT", "F50", "F90", "PR", "H1x", "H2x", "H1y", "H2y"]
 
 def get_header(options):
     chromosomes = []
@@ -65,16 +75,29 @@ def get_alt_breakend(options, chromx, x, chromy, y, orientation):
     return ref, alt
 
 def get_sample_info(sample, event):
-    sample_info = []
-    shared = event["{}_shared".format(sample.name)]
-    total = event["{}_total".format(sample.name)]
-    if shared > 5:
-        sample_info.append("0/1")
+    sample_info = {}
+    sample_info["BS"] = event["{}_shared".format(sample.name)]
+    sample_info["BT"] = event["{}_total".format(sample.name)]
+    if sample_info["BS"] > 5:
+        sample_info["GT"] = "0/1"
     else:
-        sample_info.append("0/0")
+        sample_info["GT"] = "0/0"
 
-    sample_info.append(shared)
-    sample_info.append(total)
+    if "{}_lengths_50".format(sample.name) in event:
+        sample_info["F50"] = event["{}_lengths_50".format(sample.name)]
+        sample_info["F90"] = event["{}_lengths_90".format(sample.name)]
+    else:
+        sample_info["F50"] = "."
+        sample_info["F90"] = "."
+
+    sample_info["PR"] = event["{}_p_resampling".format(sample.name)]
+
+    sample_info["H1x"] = event["{}_x_hap0".format(sample.name)]
+    sample_info["H2x"] = event["{}_x_hap1".format(sample.name)]
+    sample_info["H1y"] = event["{}_y_hap0".format(sample.name)]
+    sample_info["H2y"] = event["{}_y_hap1".format(sample.name)]
+
+    sample_info = [sample_info[key] for key in FORMAT]
 
     return ":".join(map(str, sample_info))
 
@@ -83,9 +106,15 @@ def get_filters(event):
 
     try:
         if "n=" in event["blacklist"]:
-            filters.append("NEAR_REF_GAP")
+            filters.append("ASSEMBLYGAP")
     except TypeError:
         pass
+
+    if event["nearby_snvs"] >= 15:
+        filters.append("NEARBYSNVS")
+
+    if "frag_length_passes" in event and not event["frag_length_passes"]:
+        filters.append("NOLONGFRAGS")
 
     if len(filters) == 0:
         return "PASS"
@@ -124,7 +153,7 @@ def convert_event(options, event_id, event):
         info = get_info(event, mateid=other_id)
         filters = get_filters(event)
 
-        fields = [chromx, x+1, this_id, ref, alt_breakend, 0, filters, info, FORMAT]
+        fields = [chromx, x+1, this_id, ref, alt_breakend, 0, filters, info, ":".join(FORMAT)]
 
         for sample_name, sample in options.samples.items():
             fields.append(get_sample_info(sample, event))
