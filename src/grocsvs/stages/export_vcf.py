@@ -12,6 +12,7 @@ VCF_HEADER = \
 ##INFO=<ID=ASSEMBLED,Number=0,Type=Flag,Description="Event is supported by a read-cloud-based sequence assembly across the breakpoints"> 
 ##INFO=<ID=MATEID,Number=1,Type=String,Description="ID of mate breakend">
 ##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
+##INFO=<ID=EVENT,Number=1,Type=String,Description="Cluster ID used to specify when multiple breakpoints belong to a single complex event">
 ##FILTER=<ID=NOLONGFRAGS,Description="No samples found with long fragments supporting event (likely segdup)">
 ##FILTER=<ID=NEARBYSNVS,Description="Very high number of possible SNVs detected in vicinity of breakpoint (likely segdup)">
 ##FILTER=<ID=ASSEMBLYGAP,Description="Nearby gap in the reference assembly found; these gaps can appear to mimic SVs">
@@ -133,6 +134,7 @@ def get_info(event, mateid=None):
     if event["assembled"]:
         info.append("ASSEMBLED")
 
+    info.append("EVENT={}".format(event["cluster"]))
     if len(info) == 0:
         return "."
 
