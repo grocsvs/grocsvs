@@ -41,7 +41,8 @@ class PreflightStep(step.StepChunk):
 
         checkers = [self.check_memory,
                     self.check_tabix,
-                    self.check_idba]
+                    self.check_idba,
+                    self.check_rpy2]
 
         for checker in checkers:
             try:
@@ -120,3 +121,13 @@ class PreflightStep(step.StepChunk):
             return True, "WARNING: it is suggested to run grocsvs with at least 16GB of memory; I detect only {:.1f}GB present".format(
                 physical_mem_gb)
         return True, "Detected {:.1f}GB available. This should be sufficient unless genome coverage is very high.".format(physical_mem_gb)
+
+    def check_rpy2(self):
+        try:
+            from rpy2 import robjects
+            from rpy2.robjects import numpy2ri
+            numpy2ri.activate()
+        except ImportError:
+            return True, "WARNING: rpy2 is not installed correctly; SVs will not be visualized"
+
+        return True, "rpy2 detected and appears to be correctly installed"

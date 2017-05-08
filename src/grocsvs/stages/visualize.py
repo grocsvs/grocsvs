@@ -24,6 +24,7 @@ class VisualizeStep(step.StepChunk):
     @staticmethod
     def get_steps(options):
         if ro is None:
+            print(" ** rpy2 not installed correctly; skipping visualization step ** ")
             return
 
         edges = load_edges(options)
