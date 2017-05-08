@@ -91,48 +91,48 @@ def get_stages():
         svstages.sv_candidates.SVCandidatesStep
 
 
-    ### Initial clustering ###
+    # ### Initial clustering ###
     
-    stages["Refine Breakpoints"] = \
-        svstages.refine_grid_search_breakpoints.RefineGridSearchBreakpointsStep
-    stages["Combine Refined Breakpoints"] = \
-        svstages.refine_grid_search_breakpoints.CombineRefinedBreakpointsStep
-    stages["Cluster SVs"] = svstages.cluster_svs.ClusterSVsStep
+    # stages["Refine Breakpoints"] = \
+    #     svstages.refine_grid_search_breakpoints.RefineGridSearchBreakpointsStep
+    # stages["Combine Refined Breakpoints"] = \
+    #     svstages.refine_grid_search_breakpoints.CombineRefinedBreakpointsStep
+    # stages["Cluster SVs"] = svstages.cluster_svs.ClusterSVsStep
 
 
-    ### Assembly ###
+    # ### Assembly ###
 
-    stages["Barcodes From Graphs"] = \
-        svstages.barcodes_from_graphs.BarcodesFromGraphsStep
+    # stages["Barcodes From Graphs"] = \
+    #     svstages.barcodes_from_graphs.BarcodesFromGraphsStep
 
-    stages["Collect Reads for Barcodes"] = \
-        svstages.collect_reads_for_barcodes.CollectReadsForBarcodesStep
+    # stages["Collect Reads for Barcodes"] = \
+    #     svstages.collect_reads_for_barcodes.CollectReadsForBarcodesStep
 
     
-    stages["Perform Assembly"] = svstages.assembly.AssemblyStep
-    stages["Walk Assemblies"] = svstages.walk_assemblies.WalkAssembliesStep
-    stages["Postassembly Merge"] = \
-        svstages.postassembly_merge.PostAssemblyMergeStep
+    # stages["Perform Assembly"] = svstages.assembly.AssemblyStep
+    # stages["Walk Assemblies"] = svstages.walk_assemblies.WalkAssembliesStep
+    # stages["Postassembly Merge"] = \
+    #     svstages.postassembly_merge.PostAssemblyMergeStep
 
 
-    ### Final clustering ###
+    # ### Final clustering ###
 
-    stages["Supporting Barcodes"] = \
-        svstages.supporting_barcodes.SupportingBarcodesStep
-    stages["Pair Evidence"] = svstages.pair_evidence.PairEvidenceStep
+    # stages["Supporting Barcodes"] = \
+    #     svstages.supporting_barcodes.SupportingBarcodesStep
+    # stages["Pair Evidence"] = svstages.pair_evidence.PairEvidenceStep
 
-    stages["Final Refine"] = \
-        svstages.refine_breakpoints.RefineBreakpointsWithAssembliesStep
-    stages["Final Cluster SVs"] = svstages.final_clustering.FinalClusterSVsStep
+    # stages["Final Refine"] = \
+    #     svstages.refine_breakpoints.RefineBreakpointsWithAssembliesStep
+    # stages["Final Cluster SVs"] = svstages.final_clustering.FinalClusterSVsStep
 
 
-    ### Multi-sample genotyping and postprocessing ###
+    # ### Multi-sample genotyping and postprocessing ###
 
-    stages["Genotyping"] = svstages.genotyping.GenotypingStep
-    stages["Merge Genotypes"] = svstages.genotyping.MergeGenotypesStep
+    # stages["Genotyping"] = svstages.genotyping.GenotypingStep
+    # stages["Merge Genotypes"] = svstages.genotyping.MergeGenotypesStep
     
-    stages["Postprocessing"] = svstages.postprocessing.PostprocessingStep
-    stages["Visualize"] = svstages.visualize.VisualizeStep
+    # stages["Postprocessing"] = svstages.postprocessing.PostprocessingStep
+    # stages["Visualize"] = svstages.visualize.VisualizeStep
 
     return stages
 

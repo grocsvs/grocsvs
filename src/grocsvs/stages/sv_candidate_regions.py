@@ -12,6 +12,12 @@ from grocsvs import structuralvariants
 from grocsvs.stages import barcode_overlaps
 
 
+def memory_usage_psutil():
+    # return the memory usage in MB
+    import psutil
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / float(2 ** 20)
+    return mem
 
 class SVCandidateRegionsStep(step.StepChunk):
     """
@@ -67,6 +73,11 @@ class SVCandidateRegionsStep(step.StepChunk):
 
 
     def run(self):
+        import sys
+        self.logger.log(":MAXSIZE: {}".format(sys.maxsize))
+        self.logger.log("CRHOM SIZE X: {:,} Y:{:,}".format(self.options.reference.chrom_lengths[self.chromx],
+                                                           self.options.reference.chrom_lengths[self.chromy]))
+
         outpath = self.outpaths(final=False)["sv_regions"]
 
         self.logger.log("loading...")
@@ -112,17 +123,27 @@ class SVCandidateRegionsStep(step.StepChunk):
         chromx_length = self.options.reference.chrom_lengths[self.chromx]
         chromy_length = self.options.reference.chrom_lengths[self.chromy]
 
+        self.logger.log("1mem usage before loading: {}GiB".format(memory_usage_psutil()))
+
         hist = numpy.zeros((chromy_length/window_size+1,
-                            chromx_length/window_size+1))
+                            chromx_length/window_size+1))#, dtype="uint16")
 
         p = numpy.zeros((chromy_length/window_size+1,
-                         chromx_length/window_size+1))
+                         chromx_length/window_size+1))#, dtype="float32")
+
+        self.logger.log("2mem usage before loading: {}GiB".format(memory_usage_psutil()))
 
         hist[:] = numpy.nan
         p[:] = numpy.nan
 
+        self.logger.log("3mem usage before loading: {}GiB".format(memory_usage_psutil()))
+
+        count = 0
         for chunk in barcode_overlaps.BarcodeOverlapsStep.chunks_for_chroms(
             self.options, self.sample, self.dataset, self.chromx, self.chromy):
+
+            self.logger.log(">> {} {}".format(count, memory_usage_psutil()))
+            count += 1
 
             inpaths = chunk.outpaths(final=True)
 
@@ -130,13 +151,15 @@ class SVCandidateRegionsStep(step.StepChunk):
             cur_hist = numpy.array(cur_file["hist"])
             cur_p =    numpy.array(cur_file["p"])
 
+            self.logger.log("{} {}".format(cur_hist.min(), cur_hist.max()))
             hist[chunk.chunky*5000:(chunk.chunky+1)*5000,
                  chunk.chunkx*5000:(chunk.chunkx+1)*5000] = cur_hist
 
             p[chunk.chunky*5000:(chunk.chunky+1)*5000,
               chunk.chunkx*5000:(chunk.chunkx+1)*5000] = cur_p
 
-        print "COUNTs:", numpy.isnan(hist).sum(), (~numpy.isnan(hist)).sum()
+        self.logger.log("COUNTs: {} {}".format(numpy.isnan(hist).sum(), (~numpy.isnan(hist)).sum()))
+        self.logger.log("mem usage after loading: {}GiB".format(memory_usage_psutil()))
         return hist, p
 
 
