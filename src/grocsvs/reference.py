@@ -21,7 +21,11 @@ class Reference(object):
                 self.chroms_to_std_chroms[chrom] = std_chrom
                 self.std_chroms_to_chroms[std_chrom] = chrom
                 self.chrom_lengths[chrom] = len(self.fasta[chrom])
-
+            else:
+                self.chroms_to_std_chroms[chrom] = chrom
+                self.std_chroms_to_chroms[chrom] = chrom
+                self.chrom_lengths[chrom] = len(self.fasta[chrom])
+                
     @property
     def chroms(self):
         if self.debug:
@@ -30,9 +34,13 @@ class Reference(object):
         return self.chrom_lengths.keys()
 
     def standardize_chrom(self, chrom):
+        chrom_re=r"(chr)?((\d+)|(X)|(Y))$"
         if "chr" in chrom:
             return chrom
-        return "chr{}".format(chrom)
+        elif re.match(chrom_re,chrom):
+            return "chr{}".format(chrom)
+        else:
+            return chrom
 
     def compare_chroms(self, chromx, chromy):
         return cmp(self.chroms.index(chromx), self.chroms.index(chromy))
