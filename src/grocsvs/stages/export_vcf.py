@@ -17,8 +17,8 @@ VCF_HEADER = \
 ##FILTER=<ID=NEARBYSNVS,Description="Very high number of possible SNVs detected in vicinity of breakpoint (likely segdup)">
 ##FILTER=<ID=ASSEMBLYGAP,Description="Nearby gap in the reference assembly found; these gaps can appear to mimic SVs">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype (currently either 1 when breakpoint is present in sample or 0 if not)">
-##FORMAT=<ID=BS,Number=1,Type=int,Description="Number of barcodes supporting the event">
-##FORMAT=<ID=BT,Number=1,Type=int,Description="Total number of barcodes, calculated as the union of barcodes at each site">
+##FORMAT=<ID=BS,Number=1,Type=Integer,Description="Number of barcodes supporting the event">
+##FORMAT=<ID=BT,Number=1,Type=Integer,Description="Total number of barcodes, calculated as the union of barcodes at each site">
 ##FORMAT=<ID=F50,Number=1,Type=Float,Description="Median fragment length supporting the breakpoint; estimated as the total across all supporting segments">
 ##FORMAT=<ID=F90,Number=1,Type=Float,Description="90th percentile of fragment lengths supporting the breakpoint; estimated as the total across all supporting segments">
 ##FORMAT=<ID=PR,Number=1,Type=Float,Description="p-value for the event, calculated by resampling from the number of supporting and total barcodes">
