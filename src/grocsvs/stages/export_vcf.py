@@ -106,7 +106,7 @@ def get_filters(event):
     filters = []
 
     try:
-        if "n=" in event["blacklist"]:
+        if "N=" in event["blacklist"]:
             filters.append("ASSEMBLYGAP")
     except TypeError:
         pass

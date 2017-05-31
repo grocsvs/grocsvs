@@ -76,6 +76,7 @@ def pick_best_edges(graph):
 
     # prune by taking best edge amongst nodes with trans-degree > 1
     # and removing all other trans-edges
+
     while len(remaining_nodes) > 0:
         best_edge = None
         best_ratio = None
@@ -185,6 +186,7 @@ def graphs_to_table(graphs):
     return table
 
 
+
 def fix_breakpoints(options, graph):
     fixed = networkx.Graph()
 
@@ -205,6 +207,15 @@ def fix_breakpoints(options, graph):
         to_ = Node(data["chrom_y"], data["new_y"], data["orientation"][1])
 
         fixed.add_edge(from_, to_, data)
+
+    to_delete = []
+    for node, degree in fixed.degree().items():
+        if degree > 1:
+            edges = fixed.edges([node], data=True)
+            edges.sort(key=lambda x: x[2]["ratio"], reverse=True)
+            for edge in edges[1:]:
+                to_delete.append(edge)
+    fixed.remove_edges_from(to_delete)
 
     nodes = fixed.nodes()
     print "::", len(nodes)
