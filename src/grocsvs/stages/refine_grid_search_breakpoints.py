@@ -120,7 +120,9 @@ class RefineGridSearchBreakpointsStep(step.StepChunk):
             input_step = sv_candidates.SVCandidatesStep(self.options, sample, dataset, self.chromx, self.chromy)
             inpath = input_step.outpaths(final=True)["svs"]
             try:
-                cur_events.append(pandas.read_table(inpath))
+                sample_events = pandas.read_table(inpath)
+                if len(sample_events) > 0:
+                    cur_events.append(sample_events)
             except pandas.io.common.EmptyDataError:
                 pass
 
