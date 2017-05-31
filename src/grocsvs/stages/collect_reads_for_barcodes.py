@@ -29,7 +29,18 @@ class CollectReadsForBarcodesStep(step.StepChunk):
         bam = pysam.AlignmentFile(dataset.bam)
         chroms_to_lengths = dict(zip(bam.references, bam.lengths))
 
-        for (chrom, start, end) in reference.split_genome(bam.references, chroms_to_lengths, 50e6):
+        ##limit to chromosomes (>1mb)
+        all_chroms_to_lengths = dict(zip(bam.references, bam.lengths))
+        chroms_to_lengths=dict()
+        #for c in dict(zip(bam.references, bam.lengths)):
+        #    if all_chroms_to_lengths[c] > 1e6:
+        #        chroms_to_lengths[c] = all_chroms_to_lengths[c]
+        large_references = tuple([c for c in chroms_to_lengths])
+                
+
+        
+        #for (chrom, start, end) in reference.split_genome(bam.references, chroms_to_lengths, 50e6):
+        for (chrom, start, end) in reference.split_genome(large_references, chroms_to_lengths, 50e6):
             step = CollectReadsForBarcodesStep(
                 options, sample, dataset, chrom, start, end)
             yield step
@@ -91,6 +102,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
     def run(self):
         self.ensure_dir()
         clusters, barcodes_map = load_barcodes_map(self.options, self.sample, self.dataset)
+        
 #        clusters_to_out_fastqs = self.get_output_fastas(clusters)
         clusters_to_out_fastqs = self.get_output_fasta_paths(clusters)
 
@@ -109,11 +121,13 @@ class CollectReadsForBarcodesStep(step.StepChunk):
             if barcode in barcodes_map:
                 for cluster in barcodes_map[barcode]:
 #                    out_fasta = clusters_to_out_fastqs[cluster]
-                    out_fasta = open(clusters_to_out_fastqs[cluster],'w')
+                    out_fasta = open(clusters_to_out_fastq_paths[cluster],'w')
 
                     seq = read.seq if not read.is_reverse else utilities.revcomp(read.seq)
+                    seq = seq.replace('\n','')
                     order = "0" if read.is_read1 else "1"
                     out_fasta.write("\t".join([read.query_name, order, seq])+"\n")
+                    out_fasta.close()
 
         with open(self.outpaths(final=False)["counts"], "w") as counts_file:
             counts_file.write("{}\n".format(count))
@@ -121,7 +135,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
 
     def fetch(self):
         bam = pysam.AlignmentFile(self.dataset.bam)
-
+        
         if self.past_end:
             chrom = bam.references[-1]
             fetch = bam.fetch(chrom, bam.lengths[-1]-100) # should seek to end
@@ -164,12 +178,13 @@ class CollectReadsForBarcodesStep(step.StepChunk):
         return clusters_to_out_fastqs
 
     def get_output_fasta_paths(self, clusters):
-         clusters_to_out_fastqs = {}
-         for cluster in clusters:
-             cluster_name = "{}.fa".format(cluster)
-             clusters_to_out_fastqs[cluster] = os.path.join(self.events_dir, cluster_name)
+        clusters_to_out_fastqs = {}
+        for cluster in clusters:
+            cluster_name = "{}.fa".format(cluster)
+            clusters_to_out_fastqs[cluster] = os.path.join(self.events_dir, cluster_name)
 
-         return clusters_to_out_fastqs
+        return clusters_to_out_fastqs
+
     
 
 def load_barcodes_map(options, sample, dataset):
@@ -178,7 +193,7 @@ def load_barcodes_map(options, sample, dataset):
     input_step = barcodes_from_graphs.BarcodesFromGraphsStep(
         options, sample, dataset)
     inpath = input_step.outpaths(final=True)["sv_barcodes"]
-
+    
     sv_barcodes = utilities.pickle.load(open(inpath))
     barcodes_map = collections.defaultdict(set)
     

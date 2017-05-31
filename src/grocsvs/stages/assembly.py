@@ -67,8 +67,11 @@ class AssemblyStep(step.StepChunk):
             steps = collect_reads_for_barcodes.CollectReadsForBarcodesStep.get_steps_for_dataset(
                 self.options, sample, dataset)
 
+            
             for cur_step in steps:
+                self.logger.log("step: "+str(cur_step))
                 input_directory = cur_step.outpaths(final=True)["event_fastqs"]
+                self.logger.log(input_directory)
                 input_file_path = os.path.join(input_directory, "{}.fa".format(self.cluster))
                 input_file_paths.append(input_file_path)
 
@@ -80,15 +83,20 @@ class AssemblyStep(step.StepChunk):
         combine_process.stdin.write("\n".join(input_file_paths))
         combine_process.stdin.close()
 
-        print input_file_paths
+        #print input_file_paths
         with open(outpath, "w") as outf:
             reads_to_ids = collections.defaultdict(list)
             counts = 0
             
             for line in combine_process.stdout:
+                #self.logger.log("LINE: "+line)
                 if counts < 10:
                     print line.strip()
                 fields = line.split()
+                
+                #some fastqs split across two lines? 
+                if len(fields) < 2: continue
+                
                 outf.write("\n".join([">"+fields[0], fields[2], ""]))
                 reads_to_ids[fields[0]].append(line)
                 counts += 1
