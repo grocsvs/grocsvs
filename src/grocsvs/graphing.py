@@ -26,10 +26,6 @@ def build_graph(evidence):
         if row["shared"]/float(row["total"]) < 0.01: continue
         if row["shared"] < 20: continue
 
-        if row["clustered_x"] == 69238641 or row["clustered_y"] == 69238641:
-            print "*"*100
-            print row
-
         chromx, x, orientationx = row["chromx"], int(row["clustered_x"]), row["orientation"][0]
         chromy, y, orientationy = row["chromy"], int(row["clustered_y"]), row["orientation"][1]
 
@@ -325,7 +321,7 @@ def visualize_graphs(outdir, graphs, evidence, file_label=""):
         breakpoints = 0
 
         for i, graph in enumerate(graphs):
-            print i, graph
+            print "visualize", i, graph
             graph = graph.copy()
 
             for n1,n2,data in graph.edges(data=True):
@@ -453,7 +449,7 @@ def get_frags_for_breakends(breakends, islast, options, sample, dataset):
         
         cur_frags["supporting"] = between
     
-    print "  ", len(cur_frags), cur_frags["supporting"].sum()
+    # print "  ", len(cur_frags), cur_frags["supporting"].sum()
 
 #     if breakends[0][2] == "+":
     if is_reversed(breakends, islast):
@@ -590,6 +586,8 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
             colors.extend([minor_color, major_color])
         
         for support_type, color in zip(support_types, colors):
+            if len(frags) == 0:
+                continue
             cur_frags = frags.loc[frags["support"]==support_type]
 
             ro.r.segments(
