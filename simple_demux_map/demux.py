@@ -48,6 +48,9 @@ def interleaved_fastq_iter(inpath1, inpath2):
         read_name, comment = reads1[0].split(" ")
         sample_bc = comment.split(":")[-1]
         if "N" in sample_bc: continue
+        if reads1 is None or reads2 is None:
+                print("ACK:", reads1, reads2)
+                return
         yield sample_bc, reads1, reads2
 
 def get_out_fastqs(sample_names, outdir, un=None):
@@ -108,7 +111,7 @@ def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcod
 
         good += 1
 
-    print("{:>13,} good:{:.1%} bad_gem:{:.1%} bad_sample:{:.1%}".format(total, good/float(total), bad_gem/float(total), bad_sample/float(total)))
+    print("{:>13,} good:{:.1%} bad_gem:{:.1%} bad_sample:{:.1%} (FINAL)".format(total, good/float(total), bad_gem/float(total), bad_sample/float(total)))
 
     # Sanity check that the user specified all well-used sample barcodes
     # this is only a warning because the user may want to ignore a sample on purpose
@@ -117,7 +120,8 @@ def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcod
         if bc not in sample_barcodes_to_samples and count > (total / float(len(sample_barcodes_to_samples)) * 0.1):
             print("Got many counts of the following unspecified sample barcode: {} (n={})".format(bc, count))
 
-
+    print("DONE!")
+            
 def main():
     parser = argparse.ArgumentParser(description="Demultiplexes pooled 10x Chromium fastq files by sample barcode and moves "
                                                  "droplet (aka GEM) barcodes into fastq comment. "
