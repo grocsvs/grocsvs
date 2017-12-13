@@ -78,7 +78,7 @@ def pick_best_edges(graph):
         best_ratio = None
         to_delete = set()
 
-        for n1,n2,data in pruned.edges_iter(remaining_nodes, data=True):
+        for n1,n2,data in pruned.edges(remaining_nodes, data=True):
             if data["kind"] != "breakpoint": #continue
                 to_delete.add((n1,n2))
 
@@ -88,7 +88,7 @@ def pick_best_edges(graph):
         
         if best_edge is None:
             break
-        for n1,n2,data in pruned.edges_iter(best_edge, data=True):
+        for n1,n2,data in pruned.edges(best_edge, data=True):
             if (data["kind"]=="breakpoint") and set([n1,n2]) != set(best_edge):
                 to_delete.add((n1,n2))
         pruned.remove_edges_from(to_delete)
@@ -109,7 +109,7 @@ def cleanup_fixed_graph(pruned):
         for cycle in cycles:
             cur_worst_val = None
             cur_worst = None
-            for a,b,data in pruned.edges_iter(cycle, data=True):
+            for a,b,data in pruned.edges(cycle, data=True):
                 cur_val = data["p"]
                 if cur_worst_val is None or cur_val < cur_worst_val:
                     cur_worst_val = cur_val
@@ -158,7 +158,7 @@ def graphs_to_table(graphs):
                         "kind", "cluster", "assembled"]
         rows = []
 
-        for nodex, nodey, data in graph.edges_iter(data=True):
+        for nodex, nodey, data in graph.edges(data=True):
             chromx, x, orientationx = nodex
             chromy, y, orientationy = nodey
             orientation = orientationx+orientationy
@@ -373,7 +373,7 @@ def visualize_frags(outdir, graphs, options):
         for component in networkx.connected_components(graph):
             subgraph = graph.subgraph(component)
             
-            ends = [node for node,degree in subgraph.degree_iter() if degree==1]
+            ends = [node for node,degree in subgraph.degree() if degree==1]
             breakends = [node for node in list(networkx.shortest_simple_paths(subgraph, ends[0], ends[1]))[0]]
             # breakends = [breakend_from_label(node) for node in breakends]
             breakends = breakends[:-1:2] + breakends[-1:]
@@ -394,7 +394,7 @@ def visualize_frag_cluster(breakpoints, options):
         chromx, x, chromy, y, orientation = breakpoint
         graph.add_edge((chromx, x, orientation[0]), (chromy, y, orientation[1]))
 
-    ends = [node for node,degree in graph.degree_iter() if degree==1]
+    ends = [node for node,degree in graph.degree() if degree==1]
     breakends = [node for node in list(networkx.shortest_simple_paths(graph, ends[0], ends[1]))[0]]
     # breakends = [breakend_from_label(node) for node in breakends]
     breakends = breakends[:-1:2] + breakends[-1:]
@@ -628,7 +628,7 @@ class ComplexEvent(object):
             
     @property
     def ends(self):
-        ends = sorted([node for node,degree in self.graph.degree_iter() if degree==1])
+        ends = sorted([node for node,degree in self.graph.degree() if degree==1])
         if len(ends) > 2:
             print "*"*100, ends
         if self.reverse:
