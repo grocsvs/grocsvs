@@ -123,15 +123,15 @@ def cleanup_fixed_graph(pruned):
     # remove all cis-edges at the ends of subgraphs
     degrees = pruned.degree()
     to_delete = []
-    for node, degree in degrees.items():
+    for node, degree in dict(degrees).items():
         if degree == 1:
-            edge = pruned.edges([node], data=True)[0]
+            edge = list(pruned.edges([node], data=True))[0]
             if edge[2]["kind"]=="facing":
                 to_delete.append(node)
     pruned.remove_nodes_from(to_delete)
 
     # remove unconnected nodes
-    pruned.remove_nodes_from([node for (node, degree) in pruned.degree().items() if degree==0])
+    pruned.remove_nodes_from([node for (node, degree) in dict(pruned.degree()).items() if degree==0])
 
     return pruned
 
@@ -202,10 +202,10 @@ def fix_breakpoints(options, graph):
         from_ = Node(data["chrom_x"], data["new_x"], data["orientation"][0])
         to_ = Node(data["chrom_y"], data["new_y"], data["orientation"][1])
 
-        fixed.add_edge(from_, to_, data)
+        fixed.add_edge(from_, to_, **data)
 
     to_delete = []
-    for node, degree in fixed.degree().items():
+    for node, degree in dict(fixed.degree()).items():
         if degree > 1:
             edges = fixed.edges([node], data=True)
             edges.sort(key=lambda x: x[2]["ratio"], reverse=True)
@@ -213,7 +213,7 @@ def fix_breakpoints(options, graph):
                 to_delete.append(edge)
     fixed.remove_edges_from(to_delete)
 
-    nodes = fixed.nodes()
+    nodes = list(fixed.nodes())
     print "::", len(nodes)
     dist1 = -500
     dist2 = 5000
@@ -624,11 +624,11 @@ class ComplexEvent(object):
             nodex = (row.chromx, row.x, row.orientation[0])
             nodey = (row.chromy, row.y, row.orientation[1])
 
-            self.graph.add_edge(nodex, nodey, {"kind":row.kind, "id":row.Index})
+            self.graph.add_edge(nodex, nodey, **{"kind":row.kind, "id":row.Index})
             
     @property
     def ends(self):
-        ends = sorted([node for node,degree in self.graph.degree_iter() if degree==1])
+        ends = sorted([node for node,degree in dict(self.graph.degree()).items() if degree==1])
         if len(ends) > 2:
             print "*"*100, ends
         if self.reverse:
