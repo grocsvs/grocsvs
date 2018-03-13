@@ -310,7 +310,7 @@ def get_barcode_info(options):
         sample_info = options.sample_info(sample.name)
         dataset_info = sample_info[dataset.id]
         barcode_frequencies = dataset_info["barcode_read_totals"]
-        barcode_frequencies /= barcode_frequencies.sum().astype(float)
+        barcode_frequencies /= numpy.array(barcode_frequencies.sum()).astype(float)
         barcode_frequencies = barcode_frequencies.values
         barcode_frequencies_by_dataset[dataset.id] = barcode_frequencies
 
