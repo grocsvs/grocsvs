@@ -219,7 +219,7 @@ def fix_breakpoints(options, graph):
     dist2 = 5000
 
     def edge_for_node(_node):
-        _edges = fixed.edges(_node)
+        _edges = list(fixed.edges(_node))
         if len(_edges) < 1:
             return None
         for n1,n2 in _edges:
