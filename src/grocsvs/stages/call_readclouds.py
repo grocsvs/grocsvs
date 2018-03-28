@@ -59,13 +59,30 @@ class CombineReadcloudsStep(step.StepChunk):
 
         readclouds = []
         for i, inpath in enumerate(self.get_input_paths()):
+            self.logger.log("\t"+str(i)+","+inpath)
             try:
                 readclouds.append(pandas.read_table(inpath, compression="gzip"))
             except pandas.io.common.EmptyDataError:
                 self.logger.log("No read clouds found in {}; skipping".format(inpath))
+
         readclouds = pandas.concat(readclouds)
+        #goodbcs = set(get_good_barcodes(readclouds))
         goodbcs = get_good_barcodes(readclouds)
-        readclouds = readclouds.loc[readclouds["bc"].isin(goodbcs)]
+
+        noclouds = len(readclouds["bc"])
+        nogoodbcs = len(goodbcs)
+
+        isinbcs = [False] * noclouds
+        bs=0
+        bcwin=1000000
+        while bs < noclouds:
+            be=bs+bcwin
+            if be > noclouds:  be=noclouds
+            isinbcs[bs:be] = readclouds["bc"][bs:be].isin(goodbcs)
+            bs+=bcwin
+        
+#        readclouds = readclouds.loc[readclouds["bc"].isin(goodbcs)]
+        readclouds = readclouds.loc[isinbcs]
 
         good_barcodes = readclouds["bc"].unique()
         barcode_map = get_barcode_map(good_barcodes)
@@ -434,7 +451,7 @@ def load_fragments(options, sample, dataset, chrom=None, start=None, end=None, u
     tabix = pysam.TabixFile(readclouds_path)
     
     if chrom is not None and chrom not in tabix.contigs:
-        print("MISSING:", chrom)
+        #print("MISSING:", chrom)
         return pandas.DataFrame(columns="chrom start_pos end_pos bc num_reads obs_len hap".split())
     
     if usecols is not None and "num_reads" not in usecols:
