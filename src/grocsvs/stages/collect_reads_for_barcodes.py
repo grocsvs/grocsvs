@@ -29,18 +29,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
         bam = pysam.AlignmentFile(dataset.bam)
         chroms_to_lengths = dict(zip(bam.references, bam.lengths))
 
-        ##limit to chromosomes (>1mb)
-        all_chroms_to_lengths = dict(zip(bam.references, bam.lengths))
-        chroms_to_lengths=dict()
-        #for c in dict(zip(bam.references, bam.lengths)):
-        #    if all_chroms_to_lengths[c] > 1e6:
-        #        chroms_to_lengths[c] = all_chroms_to_lengths[c]
-        large_references = tuple([c for c in chroms_to_lengths])
-                
-
-        
-        #for (chrom, start, end) in reference.split_genome(bam.references, chroms_to_lengths, 50e6):
-        for (chrom, start, end) in reference.split_genome(large_references, chroms_to_lengths, 50e6):
+        for (chrom, start, end) in reference.split_genome(bam.references, chroms_to_lengths, 50e6):
             step = CollectReadsForBarcodesStep(
                 options, sample, dataset, chrom, start, end)
             yield step
