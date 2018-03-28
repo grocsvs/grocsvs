@@ -66,7 +66,6 @@ class AssemblyStep(step.StepChunk):
         for sample, dataset in self.options.iter_10xdatasets():
             steps = collect_reads_for_barcodes.CollectReadsForBarcodesStep.get_steps_for_dataset(
                 self.options, sample, dataset)
-
             
             for cur_step in steps:
                 self.logger.log("step: "+str(cur_step))
@@ -89,7 +88,6 @@ class AssemblyStep(step.StepChunk):
             counts = 0
             
             for line in combine_process.stdout:
-                #self.logger.log("LINE: "+line)
                 if counts < 10:
                     print line.strip()
                 fields = line.split()

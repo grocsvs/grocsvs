@@ -2,8 +2,6 @@ import collections
 import numpy
 import pyfaidx
 import re
-import sys 
-
 
 class Reference(object):
     def __init__(self, path, debug=False):
@@ -17,7 +15,6 @@ class Reference(object):
 
         chrom_re = r"(chr)?((\d+)|(X)|(Y))$"
 
-        print >> sys.stderr, "FASTA", self.fasta.keys()
         for chrom in self.fasta.keys():
             std_chrom = self.standardize_chrom(chrom)
 #            if re.match(chrom_re, std_chrom):
@@ -30,7 +27,6 @@ class Reference(object):
         if self.debug:
         #    return ["chr20", "chr21"]
             pass
-        #print >> sys.stderr, "LENGTHS", self.chrom_lengths.keys()
         return self.chrom_lengths.keys()
 
     def standardize_chrom(self, chrom):
