@@ -120,7 +120,9 @@ class RefineGridSearchBreakpointsStep(step.StepChunk):
             input_step = sv_candidates.SVCandidatesStep(self.options, sample, dataset, self.chromx, self.chromy)
             inpath = input_step.outpaths(final=True)["svs"]
             try:
-                cur_events.append(pandas.read_table(inpath))
+                sample_events = pandas.read_table(inpath)
+                if len(sample_events) > 0:
+                    cur_events.append(sample_events)
             except pandas.io.common.EmptyDataError:
                 pass
 
@@ -269,7 +271,7 @@ def get_breakpoint(frags, pos, orientation, extend=20000):
         curstart = max(frag["start_pos"]-(pos-extend), 0)
         curend = min(frag["end_pos"]-(pos-extend), len(density))
 
-        density[curstart:curend] += 1
+        density[int(curstart):int(curend)] += 1
 
     peaks = numpy.where(density>(0.9*density.max()))[0]
     if orientation == "+":
@@ -308,7 +310,7 @@ def get_barcode_info(options):
         sample_info = options.sample_info(sample.name)
         dataset_info = sample_info[dataset.id]
         barcode_frequencies = dataset_info["barcode_read_totals"]
-        barcode_frequencies /= barcode_frequencies.sum().astype(float)
+        barcode_frequencies /= numpy.array(barcode_frequencies.sum()).astype(float)
         barcode_frequencies = barcode_frequencies.values
         barcode_frequencies_by_dataset[dataset.id] = barcode_frequencies
 

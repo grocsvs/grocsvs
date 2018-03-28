@@ -26,10 +26,6 @@ def build_graph(evidence):
         if row["shared"]/float(row["total"]) < 0.01: continue
         if row["shared"] < 20: continue
 
-        if row["clustered_x"] == 69238641 or row["clustered_y"] == 69238641:
-            print "*"*100
-            print row
-
         chromx, x, orientationx = row["chromx"], int(row["clustered_x"]), row["orientation"][0]
         chromy, y, orientationy = row["chromy"], int(row["clustered_y"]), row["orientation"][1]
 
@@ -76,12 +72,13 @@ def pick_best_edges(graph):
 
     # prune by taking best edge amongst nodes with trans-degree > 1
     # and removing all other trans-edges
+
     while len(remaining_nodes) > 0:
         best_edge = None
         best_ratio = None
         to_delete = set()
 
-        for n1,n2,data in pruned.edges_iter(remaining_nodes, data=True):
+        for n1,n2,data in pruned.edges(remaining_nodes, data=True):
             if data["kind"] != "breakpoint": #continue
                 to_delete.add((n1,n2))
 
@@ -91,7 +88,7 @@ def pick_best_edges(graph):
         
         if best_edge is None:
             break
-        for n1,n2,data in pruned.edges_iter(best_edge, data=True):
+        for n1,n2,data in pruned.edges(best_edge, data=True):
             if (data["kind"]=="breakpoint") and set([n1,n2]) != set(best_edge):
                 to_delete.add((n1,n2))
         pruned.remove_edges_from(to_delete)
@@ -112,7 +109,7 @@ def cleanup_fixed_graph(pruned):
         for cycle in cycles:
             cur_worst_val = None
             cur_worst = None
-            for a,b,data in pruned.edges_iter(cycle, data=True):
+            for a,b,data in pruned.edges(cycle, data=True):
                 cur_val = data["p"]
                 if cur_worst_val is None or cur_val < cur_worst_val:
                     cur_worst_val = cur_val
@@ -126,15 +123,15 @@ def cleanup_fixed_graph(pruned):
     # remove all cis-edges at the ends of subgraphs
     degrees = pruned.degree()
     to_delete = []
-    for node, degree in degrees.items():
+    for node, degree in dict(degrees).items():
         if degree == 1:
-            edge = pruned.edges([node], data=True)[0]
+            edge = list(pruned.edges([node], data=True))[0]
             if edge[2]["kind"]=="facing":
                 to_delete.append(node)
     pruned.remove_nodes_from(to_delete)
 
     # remove unconnected nodes
-    pruned.remove_nodes_from([node for (node, degree) in pruned.degree().items() if degree==0])
+    pruned.remove_nodes_from([node for (node, degree) in dict(pruned.degree()).items() if degree==0])
 
     return pruned
 
@@ -161,7 +158,7 @@ def graphs_to_table(graphs):
                         "kind", "cluster", "assembled"]
         rows = []
 
-        for nodex, nodey, data in graph.edges_iter(data=True):
+        for nodex, nodey, data in graph.edges(data=True):
             chromx, x, orientationx = nodex
             chromy, y, orientationy = nodey
             orientation = orientationx+orientationy
@@ -185,6 +182,7 @@ def graphs_to_table(graphs):
     return table
 
 
+
 def fix_breakpoints(options, graph):
     fixed = networkx.Graph()
 
@@ -204,15 +202,24 @@ def fix_breakpoints(options, graph):
         from_ = Node(data["chrom_x"], data["new_x"], data["orientation"][0])
         to_ = Node(data["chrom_y"], data["new_y"], data["orientation"][1])
 
-        fixed.add_edge(from_, to_, data)
+        fixed.add_edge(from_, to_, **data)
 
-    nodes = fixed.nodes()
+    to_delete = []
+    for node, degree in dict(fixed.degree()).items():
+        if degree > 1:
+            edges = fixed.edges([node], data=True)
+            edges.sort(key=lambda x: x[2]["ratio"], reverse=True)
+            for edge in edges[1:]:
+                to_delete.append(edge)
+    fixed.remove_edges_from(to_delete)
+
+    nodes = list(fixed.nodes())
     print "::", len(nodes)
     dist1 = -500
     dist2 = 5000
 
     def edge_for_node(_node):
-        _edges = fixed.edges(_node)
+        _edges = list(fixed.edges(_node))
         if len(_edges) < 1:
             return None
         for n1,n2 in _edges:
@@ -314,7 +321,7 @@ def visualize_graphs(outdir, graphs, evidence, file_label=""):
         breakpoints = 0
 
         for i, graph in enumerate(graphs):
-            print i, graph
+            print "visualize", i, graph
             graph = graph.copy()
 
             for n1,n2,data in graph.edges(data=True):
@@ -442,7 +449,7 @@ def get_frags_for_breakends(breakends, islast, options, sample, dataset):
         
         cur_frags["supporting"] = between
     
-    print "  ", len(cur_frags), cur_frags["supporting"].sum()
+    # print "  ", len(cur_frags), cur_frags["supporting"].sum()
 
 #     if breakends[0][2] == "+":
     if is_reversed(breakends, islast):
@@ -579,6 +586,8 @@ def do_plotting(breakpoints_to_frags, bcs_to_rows, options, sample, dataset,
             colors.extend([minor_color, major_color])
         
         for support_type, color in zip(support_types, colors):
+            if len(frags) == 0:
+                continue
             cur_frags = frags.loc[frags["support"]==support_type]
 
             ro.r.segments(
@@ -615,11 +624,11 @@ class ComplexEvent(object):
             nodex = (row.chromx, row.x, row.orientation[0])
             nodey = (row.chromy, row.y, row.orientation[1])
 
-            self.graph.add_edge(nodex, nodey, {"kind":row.kind, "id":row.Index})
+            self.graph.add_edge(nodex, nodey, **{"kind":row.kind, "id":row.Index})
             
     @property
     def ends(self):
-        ends = sorted([node for node,degree in self.graph.degree_iter() if degree==1])
+        ends = sorted([node for node,degree in dict(self.graph.degree()).items() if degree==1])
         if len(ends) > 2:
             print "*"*100, ends
         if self.reverse:

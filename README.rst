@@ -9,10 +9,11 @@ Installation
 
 Prerequisites: the following programs must be installed prior to running GROC-SVs:
 
+* python -- GROC-SVs has been tested on python 2.7 on Mac and Linux; it is not compatible with python 3.x
 * `idba_ud <https://github.com/grocsvs/idba/releases/tag/1.1.3g1>`_ -- please use this version, as the version distributed by the original author does not support paired reads longer than 128 bp
 * `samtools and htslib <http://www.htslib.org/download/>`_ -- version 1.0 or later of the ``samtools``, ``bgzip``, and ``tabix`` programs must all be in your ``$PATH``
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
-* `graphviz <http://www.graphviz.org/Download..php>`_ (optional)
+* `graphviz <http://www.graphviz.org/Download..php>`_ (required for pygraphviz visualization; see `here <https://github.com/grocsvs/grocsvs/issues/7>`_ if you have trouble installing)
 
 We recommend setting up a `virtualenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ prior to installing GROC-SVs (or using `virtualenvwrapper <http://www.simononsoftware.com/virtualenv-tutorial-part-2/>`_):
 

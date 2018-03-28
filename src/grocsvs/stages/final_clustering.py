@@ -132,7 +132,7 @@ def pick_assembled_breakpoints(graph, assembly_evidence):
         data["assembled"] = True
 
         to_delete = set()
-        for n1,n2,data in pruned.edges_iter((nodex, nodey), data=True):
+        for n1,n2,data in pruned.edges((nodex, nodey), data=True):
             if (data["kind"]=="breakpoint") and set([n1,n2]) != set([nodex, nodey]):
                 to_delete.add((n1,n2))
         pruned.remove_edges_from(to_delete)

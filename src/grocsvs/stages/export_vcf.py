@@ -9,18 +9,18 @@ VCF_HEADER = \
 ##source=grocsvs_v{version}
 ##reference=file://{reference}
 {chromosomes}
-##INFO=<ID=ASSEMBLED,Number=0,Type=Flag,Description="Event is supported by a read-cloud-based sequence assembly across the breakpoints"> 
+##INFO=<ID=ASSEMBLED,Number=0,Type=Flag,Description="Event is supported by a read-cloud-based sequence assembly across the breakpoints">
 ##INFO=<ID=MATEID,Number=1,Type=String,Description="ID of mate breakend">
 ##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
 ##INFO=<ID=EVENT,Number=1,Type=String,Description="Cluster ID used to specify when multiple breakpoints belong to a single complex event">
 ##FILTER=<ID=NOLONGFRAGS,Description="No samples found with long fragments supporting event (likely segdup)">
 ##FILTER=<ID=NEARBYSNVS,Description="Very high number of possible SNVs detected in vicinity of breakpoint (likely segdup)">
 ##FILTER=<ID=ASSEMBLYGAP,Description="Nearby gap in the reference assembly found; these gaps can appear to mimic SVs">
-##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype (currently either 1 when breakpoint is present in sample or 0 if not)"> 
-##FORMAT=<ID=BS,Number=1,Type=int,Description="Number of barcodes supporting the event"> 
-##FORMAT=<ID=BT,Number=1,Type=int,Description="Total number of barcodes, calculated as the union of barcodes at each site"> 
-##FORMAT=<ID=F50,Number=1,Type=Float,Description="Median fragment length supporting the breakpoint; estimated as the total across all supporting segments"> 
-##FORMAT=<ID=F90,Number=1,Type=Float,Description="90th percentile of fragment lengths supporting the breakpoint; estimated as the total across all supporting segments"> 
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype (currently either 1 when breakpoint is present in sample or 0 if not)">
+##FORMAT=<ID=BS,Number=1,Type=Integer,Description="Number of barcodes supporting the event">
+##FORMAT=<ID=BT,Number=1,Type=Integer,Description="Total number of barcodes, calculated as the union of barcodes at each site">
+##FORMAT=<ID=F50,Number=1,Type=Float,Description="Median fragment length supporting the breakpoint; estimated as the total across all supporting segments">
+##FORMAT=<ID=F90,Number=1,Type=Float,Description="90th percentile of fragment lengths supporting the breakpoint; estimated as the total across all supporting segments">
 ##FORMAT=<ID=PR,Number=1,Type=Float,Description="p-value for the event, calculated by resampling from the number of supporting and total barcodes">
 ##FORMAT=<ID=H1x,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 1 (left side of breakpoint)">
 ##FORMAT=<ID=H2x,Number=1,Type=String,Description="Number of supporting barcodes assigned to haplotype 2 (left side of breakpoint)">
@@ -106,7 +106,7 @@ def get_filters(event):
     filters = []
 
     try:
-        if "n=" in event["blacklist"]:
+        if "N=" in event["blacklist"]:
             filters.append("ASSEMBLYGAP")
     except TypeError:
         pass
@@ -150,7 +150,7 @@ def convert_event(options, event_id, event):
 
         this_id = "{}:{}".format(event_id, i)
         other_id = "{}:{}".format(event_id, 1-i)
-        
+       
         ref, alt_breakend = get_alt_breakend(options, chromx, x, chromy, y, orientation)
         info = get_info(event, mateid=other_id)
         filters = get_filters(event)

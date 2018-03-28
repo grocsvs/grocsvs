@@ -17,10 +17,13 @@ There are several required arguments:
 
 If the ``-o`` option specifying the output directory is not specified, the demultiplexed fastq files will be placed in the current working directory.
 
+Please note that, in order to run ``demux.py`` you need to either be in the ``grocsvs/simple_demux_map`` directory or to add that directory to your ``$PYTHONPATH`` environment variable.
+
 For example, you might run the following command:
 
 .. code-block:: bash
 
+    cd .../path/to/grocsvs/simple_demux_map
     python demux.py -s SI_GA_A1=SampleA -s SI_GA_B1=SampleB -b 4M-with-alts-february-2016.txt.xz -o results reads_1.fastq.gz reads_2.fastq.gz
 
 This will create ``SampleA_1.fastq.gz``, ``SampleA_2.fastq.gz``, ``SampleB_1.fastq.gz`` and ``SampleB_2.fastq.gz`` in the ``results`` directory.

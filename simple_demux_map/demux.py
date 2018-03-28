@@ -48,11 +48,17 @@ def interleaved_fastq_iter(inpath1, inpath2):
         read_name, comment = reads1[0].split(" ")
         sample_bc = comment.split(":")[-1]
         if "N" in sample_bc: continue
+        if reads1 is None or reads2 is None:
+                print("ACK:", reads1, reads2)
+                return
         yield sample_bc, reads1, reads2
 
-def get_out_fastqs(sample_names, outdir):
+def get_out_fastqs(sample_names, outdir, un=None):
     samples_to_out_fastqs = {}
-
+    if un is not None:
+        sample_names = sample_names.copy()
+        sample_names.add(un)
+        
     for sample_name in sample_names:
         samples_to_out_fastqs[sample_name] = []
         for i in [1,2]:
@@ -64,9 +70,9 @@ def get_out_fastqs(sample_names, outdir):
     return samples_to_out_fastqs
 
 
-def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcodes, outdir):
+def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcodes, outdir, un=None):
     gem_barcode_length = 16
-    samples_to_out_fastqs = get_out_fastqs(set(sample_barcodes_to_samples.values()), outdir)
+    samples_to_out_fastqs = get_out_fastqs(set(sample_barcodes_to_samples.values()), outdir, un)
 
     total = 0
     good = 0
@@ -83,7 +89,8 @@ def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcod
         bc_counts[sample_bc] += 1
         if sample_bc not in sample_barcodes_to_samples:
             bad_sample += 1
-            continue
+            if un is None:
+                continue
 
         gem_bc = reads1[1][:gem_barcode_length]
         if gem_bc not in gem_barcodes:
@@ -98,13 +105,13 @@ def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcod
         out_reads2 = reads2[:]
         out_reads2[0] = out_reads1[0]
 
-        sample_name = sample_barcodes_to_samples[sample_bc]
+        sample_name = sample_barcodes_to_samples.get(sample_bc, un)
         samples_to_out_fastqs[sample_name][0].write("\n".join(out_reads1)+"\n")
         samples_to_out_fastqs[sample_name][1].write("\n".join(out_reads2)+"\n")
 
         good += 1
 
-    print("{:>13,} good:{:.1%} bad_gem:{:.1%} bad_sample:{:.1%}".format(total, good/float(total), bad_gem/float(total), bad_sample/float(total)))
+    print("{:>13,} good:{:.1%} bad_gem:{:.1%} bad_sample:{:.1%} (FINAL)".format(total, good/float(total), bad_gem/float(total), bad_sample/float(total)))
 
     # Sanity check that the user specified all well-used sample barcodes
     # this is only a warning because the user may want to ignore a sample on purpose
@@ -113,7 +120,8 @@ def demultiplex(fastq1_path, fastq2_path, sample_barcodes_to_samples, gem_barcod
         if bc not in sample_barcodes_to_samples and count > (total / float(len(sample_barcodes_to_samples)) * 0.1):
             print("Got many counts of the following unspecified sample barcode: {} (n={})".format(bc, count))
 
-
+    print("DONE!")
+            
 def main():
     parser = argparse.ArgumentParser(description="Demultiplexes pooled 10x Chromium fastq files by sample barcode and moves "
                                                  "droplet (aka GEM) barcodes into fastq comment. "
@@ -137,6 +145,7 @@ def main():
 
     optional_args = parser.add_argument_group("Optional arguments")
     optional_args.add_argument("-o", "--outdir", help="output directory; default is the current working directory")
+    optional_args.add_argument("-u", "--unmatched", help="an output file to put all reads without a barcode match")
     
 
     args = parser.parse_args()
@@ -147,8 +156,10 @@ def main():
         ensure_dir(args.outdir)
     print(args)
 
+    if args.sample is None and not args.unmatched:
+        raise Exception("Must specify at least one barcode=sample_name assignment using the '-s' option AND/OR an --unmatched file")
     if args.sample is None:
-        raise Exception("Must specify at least one barcode=sample_name assignment using the '-s' option")
+        args.sample = []
     if args.gem_barcodes is None:
         raise Exception("Must specify the file listing correct GEM barcodes using the '-b' option")
             
@@ -168,7 +179,7 @@ def main():
     gem_barcodes = load_gem_barcodes(args.gem_barcodes)
 
     print("Running demultiplexing; this may take a while!")
-    demultiplex(args.fastq1, args.fastq2, sample_barcodes_to_samples, gem_barcodes, args.outdir)
+    demultiplex(args.fastq1, args.fastq2, sample_barcodes_to_samples, gem_barcodes, args.outdir, args.unmatched)
 
 if __name__ == '__main__':
     main()

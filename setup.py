@@ -20,7 +20,7 @@ setup(
         'console_scripts' : ["grocsvs = grocsvs.main:main"]
     },
 
-    install_requires = ["admiral", "h5py", "networkx", "pandas", "pybedtools", 
+    install_requires = ["admiral", "h5py", "networkx>=2.0", "pandas", "pybedtools", 
                         "pyfaidx", "pysam>=0.10.0", "scipy", "ipython-cluster-helper",
                         "pygraphviz", "psutil"],
 
