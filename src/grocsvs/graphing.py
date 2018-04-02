@@ -207,7 +207,7 @@ def fix_breakpoints(options, graph):
     to_delete = []
     for node, degree in dict(fixed.degree()).items():
         if degree > 1:
-            edges = fixed.edges([node], data=True)
+            edges = list(fixed.edges([node], data=True))
             edges.sort(key=lambda x: x[2]["ratio"], reverse=True)
             for edge in edges[1:]:
                 to_delete.append(edge)
