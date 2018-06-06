@@ -33,10 +33,10 @@ def build_graph(evidence):
         from_ = Node(chromx, x, orientationx)
         to_ = Node(chromy, y, orientationy)
 
-        kind = _facing(chromx, x, orientationx, chromy, y, orientationy)
-        if kind == "bad": continue
-        if kind == "facing": continue
-
+        # kind = _facing(chromx, x, orientationx, chromy, y, orientationy)
+        # if kind == "bad": continue
+        # if kind == "facing": continue
+        kind = "breakpoint"
         graph.add_edge(from_, to_,
             kind = kind,
             shared = row["shared"],
