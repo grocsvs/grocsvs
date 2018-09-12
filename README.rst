@@ -15,6 +15,8 @@ Prerequisites: the following programs must be installed prior to running GROC-SV
 * `bwa-mem <https://github.com/lh3/bwa/releases>`_
 * `graphviz <http://www.graphviz.org/Download..php>`_ (required for pygraphviz visualization; see `here <https://github.com/grocsvs/grocsvs/issues/7>`_ if you have trouble installing)
 
+In addition, generation of the visualizations requires installation of `rpy2 <https://rpy2.bitbucket.io>`_; this stage will be skipped if rpy2 can't be found. (Note that you may re-start the pipeline after installing rpy2 in order to complete this step, picking up where it left off.)
+
 We recommend setting up a `virtualenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ prior to installing GROC-SVs (or using `virtualenvwrapper <http://www.simononsoftware.com/virtualenv-tutorial-part-2/>`_):
 
 .. code-block:: bash
