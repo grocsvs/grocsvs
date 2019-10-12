@@ -91,7 +91,9 @@ class CollectReadsForBarcodesStep(step.StepChunk):
     def run(self):
         self.ensure_dir()
         clusters, barcodes_map = load_barcodes_map(self.options, self.sample, self.dataset)
-        clusters_to_out_fastqs = self.get_output_fastas(clusters)
+        
+#        clusters_to_out_fastqs = self.get_output_fastas(clusters)
+        clusters_to_out_fastqs = self.get_output_fasta_paths(clusters)
 
         count = 0
 
@@ -107,11 +109,14 @@ class CollectReadsForBarcodesStep(step.StepChunk):
 
             if barcode in barcodes_map:
                 for cluster in barcodes_map[barcode]:
-                    out_fasta = clusters_to_out_fastqs[cluster]
+#                    out_fasta = clusters_to_out_fastqs[cluster]
+                    out_fasta = open(clusters_to_out_fastq_paths[cluster],'w')
 
                     seq = read.seq if not read.is_reverse else utilities.revcomp(read.seq)
+                    seq = seq.replace('\n','')
                     order = "0" if read.is_read1 else "1"
                     out_fasta.write("\t".join([read.query_name, order, seq])+"\n")
+                    out_fasta.close()
 
         with open(self.outpaths(final=False)["counts"], "w") as counts_file:
             counts_file.write("{}\n".format(count))
@@ -119,7 +124,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
 
     def fetch(self):
         bam = pysam.AlignmentFile(self.dataset.bam)
-
+        
         if self.past_end:
             chrom = bam.references[-1]
             fetch = bam.fetch(chrom, bam.lengths[-1]-100) # should seek to end
@@ -161,6 +166,14 @@ class CollectReadsForBarcodesStep(step.StepChunk):
 
         return clusters_to_out_fastqs
 
+    def get_output_fasta_paths(self, clusters):
+        clusters_to_out_fastqs = {}
+        for cluster in clusters:
+            cluster_name = "{}.fa".format(cluster)
+            clusters_to_out_fastqs[cluster] = os.path.join(self.events_dir, cluster_name)
+
+        return clusters_to_out_fastqs
+
     
 
 def load_barcodes_map(options, sample, dataset):
@@ -169,7 +182,7 @@ def load_barcodes_map(options, sample, dataset):
     input_step = barcodes_from_graphs.BarcodesFromGraphsStep(
         options, sample, dataset)
     inpath = input_step.outpaths(final=True)["sv_barcodes"]
-
+    
     sv_barcodes = utilities.pickle.load(open(inpath))
     barcodes_map = collections.defaultdict(set)
     
