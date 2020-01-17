@@ -110,7 +110,7 @@ class CollectReadsForBarcodesStep(step.StepChunk):
             if barcode in barcodes_map:
                 for cluster in barcodes_map[barcode]:
 #                    out_fasta = clusters_to_out_fastqs[cluster]
-                    out_fasta = open(clusters_to_out_fastq_paths[cluster],'w')
+                    out_fasta = open(clusters_to_out_fastqs[cluster],'w')
 
                     seq = read.seq if not read.is_reverse else utilities.revcomp(read.seq)
                     seq = seq.replace('\n','')
