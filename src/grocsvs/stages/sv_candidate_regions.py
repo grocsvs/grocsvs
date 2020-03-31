@@ -112,11 +112,17 @@ class SVCandidateRegionsStep(step.StepChunk):
         chromx_length = self.options.reference.chrom_lengths[self.chromx]
         chromy_length = self.options.reference.chrom_lengths[self.chromy]
 
-        hist = numpy.zeros((chromy_length/window_size+1,
-                            chromx_length/window_size+1))
+        num_chromy = chromy_length/window_size
+        num_chromx = chromx_length/window_size
 
-        p = numpy.zeros((chromy_length/window_size+1,
-                         chromx_length/window_size+1))
+        if chromy_length%window_size != 0:
+            num_chromy += 1
+
+        if chromx_length%window_size != 0:
+            num_chromx += 1
+
+        hist = numpy.zeros((num_chromy, num_chromx))
+        p =    numpy.zeros((num_chromy, num_chromx))
 
         hist[:] = numpy.nan
         p[:] = numpy.nan
